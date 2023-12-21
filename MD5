@@ -1,0 +1,13 @@
+d63dded1cdb93ef3cda34243d87a439e *DESCRIPTION
+cb0529176fc349b9fd830dc2f8fc3d13 *NAMESPACE
+f68baf9604f880efd54f2d4156340da9 *NEWS
+481042c941426469f08b9eceffeff625 *R/ResamplingSameOther.R
+17c835ee2bfda960c79e75513c21d204 *build/vignette.rds
+1fc0281166d11441298234a5fa91ab80 *inst/doc/Simulations.R
+f9b6fe4551fed73ed707d54eb06ccedb *inst/doc/Simulations.Rmd
+19004861eb734190c447e86c28bcca6e *inst/doc/Simulations.html
+e12cf35ca1e28531a468fa61060dd0dd *man/ResamplingSameOther.Rd
+8bf5a5565668d7d9ad9650bfbaabe5d3 *man/score.Rd
+db5cbe90e5274b676340b70930dfd2fd *tests/testthat.R
+c72776bdc5c1fb0c9c8e1664546b844b *tests/testthat/test-CRAN.R
+f9b6fe4551fed73ed707d54eb06ccedb *vignettes/Simulations.Rmd
