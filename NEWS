@@ -1,3 +1,13 @@
+Changes in version 2024.1.8
+
+- Rename Simulations vignette to ResamplingSameOtherCV.
+- New ResamplingVariableSizeTrainCV class and vignette.
+- use setDTthreads(1L) before tests to avoid CRAN NOTE (Running R code in ‘testthat.R’ had CPU time 2.8 times elapsed time).
+
+Changes in version 2023.12.23
+
+- To get data set names in Simulations vignette, use task data names instead of learner$state$data_prototype.
+
 Changes in version 2023.12.20
 
 - First CRAN release.
