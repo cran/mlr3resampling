@@ -504,85 +504,14 @@ reg.dt
 #&gt; 3: impossible       regr.rpart same_other_cv
 #&gt; 4: impossible regr.featureless same_other_cv</code></pre>
 <p>In the code below, we execute the benchmark experiment (in parallel using the multisession future plan).</p>
-<pre class="r"><code>if(FALSE){
+<pre class="r"><code>if(FALSE){#for CRAN.
   if(require(future))plan(&quot;multisession&quot;)
 }
+if(require(lgr))get_logger(&quot;mlr3&quot;)$set_threshold(&quot;warn&quot;)
+#&gt; Le chargement a nécessité le package : lgr
+#&gt; Warning: le package &#39;lgr&#39; a été compilé avec la version R 4.4.0
 (reg.bench.result &lt;- mlr3::benchmark(
   reg.bench.grid, store_models = TRUE))
-#&gt; INFO  [21:09:49.255] [mlr3] Running benchmark with 72 resampling iterations
-#&gt; INFO  [21:09:49.787] [mlr3] Applying learner &#39;regr.rpart&#39; on task &#39;easy&#39; (iter 1/18)
-#&gt; INFO  [21:09:49.935] [mlr3] Applying learner &#39;regr.rpart&#39; on task &#39;easy&#39; (iter 2/18)
-#&gt; INFO  [21:09:50.007] [mlr3] Applying learner &#39;regr.rpart&#39; on task &#39;easy&#39; (iter 3/18)
-#&gt; INFO  [21:09:50.094] [mlr3] Applying learner &#39;regr.rpart&#39; on task &#39;easy&#39; (iter 4/18)
-#&gt; INFO  [21:09:50.168] [mlr3] Applying learner &#39;regr.rpart&#39; on task &#39;easy&#39; (iter 5/18)
-#&gt; INFO  [21:09:50.241] [mlr3] Applying learner &#39;regr.rpart&#39; on task &#39;easy&#39; (iter 6/18)
-#&gt; INFO  [21:09:50.310] [mlr3] Applying learner &#39;regr.rpart&#39; on task &#39;easy&#39; (iter 7/18)
-#&gt; INFO  [21:09:50.381] [mlr3] Applying learner &#39;regr.rpart&#39; on task &#39;easy&#39; (iter 8/18)
-#&gt; INFO  [21:09:50.488] [mlr3] Applying learner &#39;regr.rpart&#39; on task &#39;easy&#39; (iter 9/18)
-#&gt; INFO  [21:09:50.591] [mlr3] Applying learner &#39;regr.rpart&#39; on task &#39;easy&#39; (iter 10/18)
-#&gt; INFO  [21:09:50.688] [mlr3] Applying learner &#39;regr.rpart&#39; on task &#39;easy&#39; (iter 11/18)
-#&gt; INFO  [21:09:50.773] [mlr3] Applying learner &#39;regr.rpart&#39; on task &#39;easy&#39; (iter 12/18)
-#&gt; INFO  [21:09:50.854] [mlr3] Applying learner &#39;regr.rpart&#39; on task &#39;easy&#39; (iter 13/18)
-#&gt; INFO  [21:09:50.913] [mlr3] Applying learner &#39;regr.rpart&#39; on task &#39;easy&#39; (iter 14/18)
-#&gt; INFO  [21:09:50.982] [mlr3] Applying learner &#39;regr.rpart&#39; on task &#39;easy&#39; (iter 15/18)
-#&gt; INFO  [21:09:51.051] [mlr3] Applying learner &#39;regr.rpart&#39; on task &#39;easy&#39; (iter 16/18)
-#&gt; INFO  [21:09:51.113] [mlr3] Applying learner &#39;regr.rpart&#39; on task &#39;easy&#39; (iter 17/18)
-#&gt; INFO  [21:09:51.180] [mlr3] Applying learner &#39;regr.rpart&#39; on task &#39;easy&#39; (iter 18/18)
-#&gt; INFO  [21:09:51.247] [mlr3] Applying learner &#39;regr.featureless&#39; on task &#39;easy&#39; (iter 1/18)
-#&gt; INFO  [21:09:51.299] [mlr3] Applying learner &#39;regr.featureless&#39; on task &#39;easy&#39; (iter 2/18)
-#&gt; INFO  [21:09:51.350] [mlr3] Applying learner &#39;regr.featureless&#39; on task &#39;easy&#39; (iter 3/18)
-#&gt; INFO  [21:09:51.397] [mlr3] Applying learner &#39;regr.featureless&#39; on task &#39;easy&#39; (iter 4/18)
-#&gt; INFO  [21:09:51.444] [mlr3] Applying learner &#39;regr.featureless&#39; on task &#39;easy&#39; (iter 5/18)
-#&gt; INFO  [21:09:51.493] [mlr3] Applying learner &#39;regr.featureless&#39; on task &#39;easy&#39; (iter 6/18)
-#&gt; INFO  [21:09:51.542] [mlr3] Applying learner &#39;regr.featureless&#39; on task &#39;easy&#39; (iter 7/18)
-#&gt; INFO  [21:09:51.602] [mlr3] Applying learner &#39;regr.featureless&#39; on task &#39;easy&#39; (iter 8/18)
-#&gt; INFO  [21:09:51.663] [mlr3] Applying learner &#39;regr.featureless&#39; on task &#39;easy&#39; (iter 9/18)
-#&gt; INFO  [21:09:51.727] [mlr3] Applying learner &#39;regr.featureless&#39; on task &#39;easy&#39; (iter 10/18)
-#&gt; INFO  [21:09:51.803] [mlr3] Applying learner &#39;regr.featureless&#39; on task &#39;easy&#39; (iter 11/18)
-#&gt; INFO  [21:09:51.848] [mlr3] Applying learner &#39;regr.featureless&#39; on task &#39;easy&#39; (iter 12/18)
-#&gt; INFO  [21:09:51.898] [mlr3] Applying learner &#39;regr.featureless&#39; on task &#39;easy&#39; (iter 13/18)
-#&gt; INFO  [21:09:51.947] [mlr3] Applying learner &#39;regr.featureless&#39; on task &#39;easy&#39; (iter 14/18)
-#&gt; INFO  [21:09:52.004] [mlr3] Applying learner &#39;regr.featureless&#39; on task &#39;easy&#39; (iter 15/18)
-#&gt; INFO  [21:09:52.051] [mlr3] Applying learner &#39;regr.featureless&#39; on task &#39;easy&#39; (iter 16/18)
-#&gt; INFO  [21:09:52.103] [mlr3] Applying learner &#39;regr.featureless&#39; on task &#39;easy&#39; (iter 17/18)
-#&gt; INFO  [21:09:52.159] [mlr3] Applying learner &#39;regr.featureless&#39; on task &#39;easy&#39; (iter 18/18)
-#&gt; INFO  [21:09:52.214] [mlr3] Applying learner &#39;regr.rpart&#39; on task &#39;impossible&#39; (iter 1/18)
-#&gt; INFO  [21:09:52.287] [mlr3] Applying learner &#39;regr.rpart&#39; on task &#39;impossible&#39; (iter 2/18)
-#&gt; INFO  [21:09:52.373] [mlr3] Applying learner &#39;regr.rpart&#39; on task &#39;impossible&#39; (iter 3/18)
-#&gt; INFO  [21:09:52.443] [mlr3] Applying learner &#39;regr.rpart&#39; on task &#39;impossible&#39; (iter 4/18)
-#&gt; INFO  [21:09:52.514] [mlr3] Applying learner &#39;regr.rpart&#39; on task &#39;impossible&#39; (iter 5/18)
-#&gt; INFO  [21:09:52.599] [mlr3] Applying learner &#39;regr.rpart&#39; on task &#39;impossible&#39; (iter 6/18)
-#&gt; INFO  [21:09:52.675] [mlr3] Applying learner &#39;regr.rpart&#39; on task &#39;impossible&#39; (iter 7/18)
-#&gt; INFO  [21:09:52.812] [mlr3] Applying learner &#39;regr.rpart&#39; on task &#39;impossible&#39; (iter 8/18)
-#&gt; INFO  [21:09:52.879] [mlr3] Applying learner &#39;regr.rpart&#39; on task &#39;impossible&#39; (iter 9/18)
-#&gt; INFO  [21:09:52.959] [mlr3] Applying learner &#39;regr.rpart&#39; on task &#39;impossible&#39; (iter 10/18)
-#&gt; INFO  [21:09:53.022] [mlr3] Applying learner &#39;regr.rpart&#39; on task &#39;impossible&#39; (iter 11/18)
-#&gt; INFO  [21:09:53.086] [mlr3] Applying learner &#39;regr.rpart&#39; on task &#39;impossible&#39; (iter 12/18)
-#&gt; INFO  [21:09:53.147] [mlr3] Applying learner &#39;regr.rpart&#39; on task &#39;impossible&#39; (iter 13/18)
-#&gt; INFO  [21:09:53.217] [mlr3] Applying learner &#39;regr.rpart&#39; on task &#39;impossible&#39; (iter 14/18)
-#&gt; INFO  [21:09:53.276] [mlr3] Applying learner &#39;regr.rpart&#39; on task &#39;impossible&#39; (iter 15/18)
-#&gt; INFO  [21:09:53.336] [mlr3] Applying learner &#39;regr.rpart&#39; on task &#39;impossible&#39; (iter 16/18)
-#&gt; INFO  [21:09:53.398] [mlr3] Applying learner &#39;regr.rpart&#39; on task &#39;impossible&#39; (iter 17/18)
-#&gt; INFO  [21:09:53.457] [mlr3] Applying learner &#39;regr.rpart&#39; on task &#39;impossible&#39; (iter 18/18)
-#&gt; INFO  [21:09:53.517] [mlr3] Applying learner &#39;regr.featureless&#39; on task &#39;impossible&#39; (iter 1/18)
-#&gt; INFO  [21:09:53.559] [mlr3] Applying learner &#39;regr.featureless&#39; on task &#39;impossible&#39; (iter 2/18)
-#&gt; INFO  [21:09:53.603] [mlr3] Applying learner &#39;regr.featureless&#39; on task &#39;impossible&#39; (iter 3/18)
-#&gt; INFO  [21:09:53.645] [mlr3] Applying learner &#39;regr.featureless&#39; on task &#39;impossible&#39; (iter 4/18)
-#&gt; INFO  [21:09:53.712] [mlr3] Applying learner &#39;regr.featureless&#39; on task &#39;impossible&#39; (iter 5/18)
-#&gt; INFO  [21:09:53.759] [mlr3] Applying learner &#39;regr.featureless&#39; on task &#39;impossible&#39; (iter 6/18)
-#&gt; INFO  [21:09:53.805] [mlr3] Applying learner &#39;regr.featureless&#39; on task &#39;impossible&#39; (iter 7/18)
-#&gt; INFO  [21:09:53.851] [mlr3] Applying learner &#39;regr.featureless&#39; on task &#39;impossible&#39; (iter 8/18)
-#&gt; INFO  [21:09:53.896] [mlr3] Applying learner &#39;regr.featureless&#39; on task &#39;impossible&#39; (iter 9/18)
-#&gt; INFO  [21:09:53.939] [mlr3] Applying learner &#39;regr.featureless&#39; on task &#39;impossible&#39; (iter 10/18)
-#&gt; INFO  [21:09:53.983] [mlr3] Applying learner &#39;regr.featureless&#39; on task &#39;impossible&#39; (iter 11/18)
-#&gt; INFO  [21:09:54.029] [mlr3] Applying learner &#39;regr.featureless&#39; on task &#39;impossible&#39; (iter 12/18)
-#&gt; INFO  [21:09:54.072] [mlr3] Applying learner &#39;regr.featureless&#39; on task &#39;impossible&#39; (iter 13/18)
-#&gt; INFO  [21:09:54.118] [mlr3] Applying learner &#39;regr.featureless&#39; on task &#39;impossible&#39; (iter 14/18)
-#&gt; INFO  [21:09:54.165] [mlr3] Applying learner &#39;regr.featureless&#39; on task &#39;impossible&#39; (iter 15/18)
-#&gt; INFO  [21:09:54.212] [mlr3] Applying learner &#39;regr.featureless&#39; on task &#39;impossible&#39; (iter 16/18)
-#&gt; INFO  [21:09:54.259] [mlr3] Applying learner &#39;regr.featureless&#39; on task &#39;impossible&#39; (iter 17/18)
-#&gt; INFO  [21:09:54.315] [mlr3] Applying learner &#39;regr.featureless&#39; on task &#39;impossible&#39; (iter 18/18)
-#&gt; INFO  [21:09:54.493] [mlr3] Finished benchmark
 #&gt; &lt;BenchmarkResult&gt; of 72 rows with 4 resampling runs
 #&gt;  nr    task_id       learner_id resampling_id iters warnings errors
 #&gt;   1       easy       regr.rpart same_other_cv    18        0      0
@@ -597,7 +526,7 @@ reg.bench.score[1]
 #&gt; 1:          all         1          1      1         1  1, 3, 5, 6,12,13,...
 #&gt;                    train                                uhash    nr
 #&gt;                   &lt;list&gt;                               &lt;char&gt; &lt;int&gt;
-#&gt; 1:  4, 7, 9,10,18,20,... 896f44ff-50b7-4dda-98f2-5438c3baf18e     1
+#&gt; 1:  4, 7, 9,10,18,20,... 1be4c702-2a74-4b2c-bfcb-5da7445cf2ab     1
 #&gt;               task task_id                       learner learner_id
 #&gt;             &lt;list&gt;  &lt;char&gt;                        &lt;list&gt;     &lt;char&gt;
 #&gt; 1: &lt;TaskRegr:easy&gt;    easy &lt;LearnerRegrRpart:regr.rpart&gt; regr.rpart
@@ -8815,82 +8744,9 @@ class.task.list
 <pre class="r"><code>if(FALSE){
   if(require(future))plan(&quot;multisession&quot;)
 }
+if(require(lgr))get_logger(&quot;mlr3&quot;)$set_threshold(&quot;warn&quot;)
 (class.bench.result &lt;- mlr3::benchmark(
   class.bench.grid, store_models = TRUE))
-#&gt; INFO  [21:10:18.576] [mlr3] Running benchmark with 72 resampling iterations
-#&gt; INFO  [21:10:18.603] [mlr3] Applying learner &#39;classif.rpart&#39; on task &#39;easy&#39; (iter 1/18)
-#&gt; INFO  [21:10:18.673] [mlr3] Applying learner &#39;classif.rpart&#39; on task &#39;easy&#39; (iter 2/18)
-#&gt; INFO  [21:10:19.102] [mlr3] Applying learner &#39;classif.rpart&#39; on task &#39;easy&#39; (iter 3/18)
-#&gt; INFO  [21:10:19.164] [mlr3] Applying learner &#39;classif.rpart&#39; on task &#39;easy&#39; (iter 4/18)
-#&gt; INFO  [21:10:19.225] [mlr3] Applying learner &#39;classif.rpart&#39; on task &#39;easy&#39; (iter 5/18)
-#&gt; INFO  [21:10:19.287] [mlr3] Applying learner &#39;classif.rpart&#39; on task &#39;easy&#39; (iter 6/18)
-#&gt; INFO  [21:10:19.349] [mlr3] Applying learner &#39;classif.rpart&#39; on task &#39;easy&#39; (iter 7/18)
-#&gt; INFO  [21:10:19.411] [mlr3] Applying learner &#39;classif.rpart&#39; on task &#39;easy&#39; (iter 8/18)
-#&gt; INFO  [21:10:19.473] [mlr3] Applying learner &#39;classif.rpart&#39; on task &#39;easy&#39; (iter 9/18)
-#&gt; INFO  [21:10:19.535] [mlr3] Applying learner &#39;classif.rpart&#39; on task &#39;easy&#39; (iter 10/18)
-#&gt; INFO  [21:10:19.597] [mlr3] Applying learner &#39;classif.rpart&#39; on task &#39;easy&#39; (iter 11/18)
-#&gt; INFO  [21:10:19.660] [mlr3] Applying learner &#39;classif.rpart&#39; on task &#39;easy&#39; (iter 12/18)
-#&gt; INFO  [21:10:19.740] [mlr3] Applying learner &#39;classif.rpart&#39; on task &#39;easy&#39; (iter 13/18)
-#&gt; INFO  [21:10:19.802] [mlr3] Applying learner &#39;classif.rpart&#39; on task &#39;easy&#39; (iter 14/18)
-#&gt; INFO  [21:10:19.864] [mlr3] Applying learner &#39;classif.rpart&#39; on task &#39;easy&#39; (iter 15/18)
-#&gt; INFO  [21:10:19.925] [mlr3] Applying learner &#39;classif.rpart&#39; on task &#39;easy&#39; (iter 16/18)
-#&gt; INFO  [21:10:19.987] [mlr3] Applying learner &#39;classif.rpart&#39; on task &#39;easy&#39; (iter 17/18)
-#&gt; INFO  [21:10:20.051] [mlr3] Applying learner &#39;classif.rpart&#39; on task &#39;easy&#39; (iter 18/18)
-#&gt; INFO  [21:10:20.114] [mlr3] Applying learner &#39;classif.featureless&#39; on task &#39;easy&#39; (iter 1/18)
-#&gt; INFO  [21:10:20.158] [mlr3] Applying learner &#39;classif.featureless&#39; on task &#39;easy&#39; (iter 2/18)
-#&gt; INFO  [21:10:20.202] [mlr3] Applying learner &#39;classif.featureless&#39; on task &#39;easy&#39; (iter 3/18)
-#&gt; INFO  [21:10:20.245] [mlr3] Applying learner &#39;classif.featureless&#39; on task &#39;easy&#39; (iter 4/18)
-#&gt; INFO  [21:10:20.288] [mlr3] Applying learner &#39;classif.featureless&#39; on task &#39;easy&#39; (iter 5/18)
-#&gt; INFO  [21:10:20.349] [mlr3] Applying learner &#39;classif.featureless&#39; on task &#39;easy&#39; (iter 6/18)
-#&gt; INFO  [21:10:20.394] [mlr3] Applying learner &#39;classif.featureless&#39; on task &#39;easy&#39; (iter 7/18)
-#&gt; INFO  [21:10:20.436] [mlr3] Applying learner &#39;classif.featureless&#39; on task &#39;easy&#39; (iter 8/18)
-#&gt; INFO  [21:10:20.480] [mlr3] Applying learner &#39;classif.featureless&#39; on task &#39;easy&#39; (iter 9/18)
-#&gt; INFO  [21:10:20.522] [mlr3] Applying learner &#39;classif.featureless&#39; on task &#39;easy&#39; (iter 10/18)
-#&gt; INFO  [21:10:20.566] [mlr3] Applying learner &#39;classif.featureless&#39; on task &#39;easy&#39; (iter 11/18)
-#&gt; INFO  [21:10:20.610] [mlr3] Applying learner &#39;classif.featureless&#39; on task &#39;easy&#39; (iter 12/18)
-#&gt; INFO  [21:10:20.654] [mlr3] Applying learner &#39;classif.featureless&#39; on task &#39;easy&#39; (iter 13/18)
-#&gt; INFO  [21:10:20.698] [mlr3] Applying learner &#39;classif.featureless&#39; on task &#39;easy&#39; (iter 14/18)
-#&gt; INFO  [21:10:20.742] [mlr3] Applying learner &#39;classif.featureless&#39; on task &#39;easy&#39; (iter 15/18)
-#&gt; INFO  [21:10:20.787] [mlr3] Applying learner &#39;classif.featureless&#39; on task &#39;easy&#39; (iter 16/18)
-#&gt; INFO  [21:10:20.833] [mlr3] Applying learner &#39;classif.featureless&#39; on task &#39;easy&#39; (iter 17/18)
-#&gt; INFO  [21:10:20.880] [mlr3] Applying learner &#39;classif.featureless&#39; on task &#39;easy&#39; (iter 18/18)
-#&gt; INFO  [21:10:20.926] [mlr3] Applying learner &#39;classif.rpart&#39; on task &#39;impossible&#39; (iter 1/18)
-#&gt; INFO  [21:10:21.016] [mlr3] Applying learner &#39;classif.rpart&#39; on task &#39;impossible&#39; (iter 2/18)
-#&gt; INFO  [21:10:21.084] [mlr3] Applying learner &#39;classif.rpart&#39; on task &#39;impossible&#39; (iter 3/18)
-#&gt; INFO  [21:10:21.151] [mlr3] Applying learner &#39;classif.rpart&#39; on task &#39;impossible&#39; (iter 4/18)
-#&gt; INFO  [21:10:21.218] [mlr3] Applying learner &#39;classif.rpart&#39; on task &#39;impossible&#39; (iter 5/18)
-#&gt; INFO  [21:10:21.286] [mlr3] Applying learner &#39;classif.rpart&#39; on task &#39;impossible&#39; (iter 6/18)
-#&gt; INFO  [21:10:21.349] [mlr3] Applying learner &#39;classif.rpart&#39; on task &#39;impossible&#39; (iter 7/18)
-#&gt; INFO  [21:10:21.414] [mlr3] Applying learner &#39;classif.rpart&#39; on task &#39;impossible&#39; (iter 8/18)
-#&gt; INFO  [21:10:21.478] [mlr3] Applying learner &#39;classif.rpart&#39; on task &#39;impossible&#39; (iter 9/18)
-#&gt; INFO  [21:10:21.541] [mlr3] Applying learner &#39;classif.rpart&#39; on task &#39;impossible&#39; (iter 10/18)
-#&gt; INFO  [21:10:21.606] [mlr3] Applying learner &#39;classif.rpart&#39; on task &#39;impossible&#39; (iter 11/18)
-#&gt; INFO  [21:10:21.691] [mlr3] Applying learner &#39;classif.rpart&#39; on task &#39;impossible&#39; (iter 12/18)
-#&gt; INFO  [21:10:21.755] [mlr3] Applying learner &#39;classif.rpart&#39; on task &#39;impossible&#39; (iter 13/18)
-#&gt; INFO  [21:10:21.819] [mlr3] Applying learner &#39;classif.rpart&#39; on task &#39;impossible&#39; (iter 14/18)
-#&gt; INFO  [21:10:21.883] [mlr3] Applying learner &#39;classif.rpart&#39; on task &#39;impossible&#39; (iter 15/18)
-#&gt; INFO  [21:10:21.947] [mlr3] Applying learner &#39;classif.rpart&#39; on task &#39;impossible&#39; (iter 16/18)
-#&gt; INFO  [21:10:22.011] [mlr3] Applying learner &#39;classif.rpart&#39; on task &#39;impossible&#39; (iter 17/18)
-#&gt; INFO  [21:10:22.075] [mlr3] Applying learner &#39;classif.rpart&#39; on task &#39;impossible&#39; (iter 18/18)
-#&gt; INFO  [21:10:22.138] [mlr3] Applying learner &#39;classif.featureless&#39; on task &#39;impossible&#39; (iter 1/18)
-#&gt; INFO  [21:10:22.183] [mlr3] Applying learner &#39;classif.featureless&#39; on task &#39;impossible&#39; (iter 2/18)
-#&gt; INFO  [21:10:22.227] [mlr3] Applying learner &#39;classif.featureless&#39; on task &#39;impossible&#39; (iter 3/18)
-#&gt; INFO  [21:10:22.271] [mlr3] Applying learner &#39;classif.featureless&#39; on task &#39;impossible&#39; (iter 4/18)
-#&gt; INFO  [21:10:22.335] [mlr3] Applying learner &#39;classif.featureless&#39; on task &#39;impossible&#39; (iter 5/18)
-#&gt; INFO  [21:10:22.380] [mlr3] Applying learner &#39;classif.featureless&#39; on task &#39;impossible&#39; (iter 6/18)
-#&gt; INFO  [21:10:22.424] [mlr3] Applying learner &#39;classif.featureless&#39; on task &#39;impossible&#39; (iter 7/18)
-#&gt; INFO  [21:10:22.467] [mlr3] Applying learner &#39;classif.featureless&#39; on task &#39;impossible&#39; (iter 8/18)
-#&gt; INFO  [21:10:22.513] [mlr3] Applying learner &#39;classif.featureless&#39; on task &#39;impossible&#39; (iter 9/18)
-#&gt; INFO  [21:10:22.556] [mlr3] Applying learner &#39;classif.featureless&#39; on task &#39;impossible&#39; (iter 10/18)
-#&gt; INFO  [21:10:22.601] [mlr3] Applying learner &#39;classif.featureless&#39; on task &#39;impossible&#39; (iter 11/18)
-#&gt; INFO  [21:10:22.644] [mlr3] Applying learner &#39;classif.featureless&#39; on task &#39;impossible&#39; (iter 12/18)
-#&gt; INFO  [21:10:22.689] [mlr3] Applying learner &#39;classif.featureless&#39; on task &#39;impossible&#39; (iter 13/18)
-#&gt; INFO  [21:10:22.734] [mlr3] Applying learner &#39;classif.featureless&#39; on task &#39;impossible&#39; (iter 14/18)
-#&gt; INFO  [21:10:22.779] [mlr3] Applying learner &#39;classif.featureless&#39; on task &#39;impossible&#39; (iter 15/18)
-#&gt; INFO  [21:10:22.822] [mlr3] Applying learner &#39;classif.featureless&#39; on task &#39;impossible&#39; (iter 16/18)
-#&gt; INFO  [21:10:22.866] [mlr3] Applying learner &#39;classif.featureless&#39; on task &#39;impossible&#39; (iter 17/18)
-#&gt; INFO  [21:10:22.912] [mlr3] Applying learner &#39;classif.featureless&#39; on task &#39;impossible&#39; (iter 18/18)
-#&gt; INFO  [21:10:23.091] [mlr3] Finished benchmark
 #&gt; &lt;BenchmarkResult&gt; of 72 rows with 4 resampling runs
 #&gt;  nr    task_id          learner_id resampling_id iters warnings errors
 #&gt;   1       easy       classif.rpart same_other_cv    18        0      0
@@ -8905,7 +8761,7 @@ class.bench.score[1]
 #&gt; 1:          all         1          1      1         1  1, 2, 8,11,12,18,...
 #&gt;                    train                                uhash    nr
 #&gt;                   &lt;list&gt;                               &lt;char&gt; &lt;int&gt;
-#&gt; 1:  3, 4, 5, 6, 9,10,... 06e92ea1-2efe-4a01-a8cf-52e68f4f589d     1
+#&gt; 1:  3, 4, 5, 6, 9,10,... 1a485214-0f9c-42b4-875c-6eb8c2419d40     1
 #&gt;                  task task_id                             learner    learner_id
 #&gt;                &lt;list&gt;  &lt;char&gt;                              &lt;list&gt;        &lt;char&gt;
 #&gt; 1: &lt;TaskClassif:easy&gt;    easy &lt;LearnerClassifRpart:classif.rpart&gt; classif.rpart
@@ -9159,8 +9015,8 @@ if(require(animint2)){
 <div id="session-info" class="section level2">
 <h2>Session info</h2>
 <pre class="r"><code>sessionInfo()
-#&gt; R Under development (unstable) (2023-12-22 r85721)
-#&gt; Platform: x86_64-pc-linux-gnu
+#&gt; R version 4.3.2 (2023-10-31)
+#&gt; Platform: x86_64-pc-linux-gnu (64-bit)
 #&gt; Running under: Ubuntu 22.04.3 LTS
 #&gt; 
 #&gt; Matrix products: default
@@ -9182,28 +9038,27 @@ if(require(animint2)){
 #&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     
 #&gt; 
 #&gt; other attached packages:
-#&gt; [1] mlr3_0.17.1         animint2_2023.11.21 data.table_1.14.99 
+#&gt; [1] mlr3_0.17.2        lgr_0.4.4          animint2_2024.1.24 data.table_1.15.0 
 #&gt; 
 #&gt; loaded via a namespace (and not attached):
-#&gt;  [1] future.apply_1.11.1     gtable_0.3.4            jsonlite_1.8.8         
-#&gt;  [4] highr_0.10              compiler_4.4.0          crayon_1.5.2           
-#&gt;  [7] rpart_4.1.23            Rcpp_1.0.11             stringr_1.5.1          
-#&gt; [10] parallel_4.4.0          jquerylib_0.1.4         globals_0.16.2         
-#&gt; [13] scales_1.3.0            uuid_1.1-1              RhpcBLASctl_0.23-42    
-#&gt; [16] yaml_2.3.8              fastmap_1.1.1           R6_2.5.1               
-#&gt; [19] plyr_1.8.9              labeling_0.4.3          knitr_1.45             
-#&gt; [22] palmerpenguins_0.1.1    backports_1.4.1         checkmate_2.3.1        
-#&gt; [25] future_1.33.1           munsell_0.5.0           paradox_0.11.1         
-#&gt; [28] bslib_0.6.1             mlr3measures_0.5.0      rlang_1.1.2            
-#&gt; [31] stringi_1.8.3           cachem_1.0.8            lgr_0.4.4              
-#&gt; [34] xfun_0.41               mlr3misc_0.13.0         sass_0.4.8             
-#&gt; [37] RJSONIO_1.3-1.9         cli_3.6.2               magrittr_2.0.3         
-#&gt; [40] digest_0.6.33           grid_4.4.0              nc_2024.1.4            
-#&gt; [43] lifecycle_1.0.4         evaluate_0.23           glue_1.6.2             
-#&gt; [46] farver_2.1.1            listenv_0.9.0           codetools_0.2-19       
-#&gt; [49] parallelly_1.36.0       colorspace_2.1-0        reshape2_1.4.4         
-#&gt; [52] rmarkdown_2.25.1        mlr3resampling_2024.1.8 tools_4.4.0            
-#&gt; [55] htmltools_0.5.7</code></pre>
+#&gt;  [1] future.apply_1.11.1      gtable_0.3.4             jsonlite_1.8.8          
+#&gt;  [4] highr_0.10               compiler_4.3.2           crayon_1.5.2            
+#&gt;  [7] rpart_4.1.23             Rcpp_1.0.12              stringr_1.5.1           
+#&gt; [10] parallel_4.3.2           jquerylib_0.1.4          globals_0.16.2          
+#&gt; [13] scales_1.3.0             uuid_1.2-0               RhpcBLASctl_0.23-42     
+#&gt; [16] yaml_2.3.8               fastmap_1.1.1            R6_2.5.1                
+#&gt; [19] plyr_1.8.9               labeling_0.4.3           knitr_1.45              
+#&gt; [22] palmerpenguins_0.1.1     backports_1.4.1          checkmate_2.3.1         
+#&gt; [25] future_1.33.1            munsell_0.5.0            paradox_0.11.1          
+#&gt; [28] bslib_0.6.1              mlr3measures_0.5.0       rlang_1.1.3             
+#&gt; [31] stringi_1.8.3            cachem_1.0.8             xfun_0.41               
+#&gt; [34] mlr3misc_0.13.0          sass_0.4.8               RJSONIO_1.3-1.9         
+#&gt; [37] cli_3.6.2                magrittr_2.0.3           digest_0.6.34           
+#&gt; [40] grid_4.3.2               nc_2024.1.30             lifecycle_1.0.4         
+#&gt; [43] evaluate_0.23            glue_1.7.0               farver_2.1.1            
+#&gt; [46] listenv_0.9.1            codetools_0.2-19         parallelly_1.36.0       
+#&gt; [49] colorspace_2.1-0         reshape2_1.4.4           rmarkdown_2.25.1        
+#&gt; [52] mlr3resampling_2024.1.23 tools_4.3.2              htmltools_0.5.7</code></pre>
 </div>
 
 

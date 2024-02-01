@@ -71,6 +71,7 @@ reg_size_cv$instance
 if(FALSE){
   if(require(future))plan("multisession")
 }
+if(require(lgr))get_logger("mlr3")$set_threshold("warn")
 (reg.bench.result <- mlr3::benchmark(
   reg.bench.grid, store_models = TRUE))
 
@@ -295,6 +296,7 @@ size_cv <- mlr3resampling::ResamplingVariableSizeTrainCV$new()
 if(FALSE){
   if(require(future))plan("multisession")
 }
+if(require(lgr))get_logger("mlr3")$set_threshold("warn")
 (class.bench.result <- mlr3::benchmark(
   class.bench.grid, store_models = TRUE))
 

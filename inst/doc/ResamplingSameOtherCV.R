@@ -69,9 +69,10 @@ if(require(animint2)){
   reg_same_other))
 
 ## -----------------------------------------------------------------------------
-if(FALSE){
+if(FALSE){#for CRAN.
   if(require(future))plan("multisession")
 }
+if(require(lgr))get_logger("mlr3")$set_threshold("warn")
 (reg.bench.result <- mlr3::benchmark(
   reg.bench.grid, store_models = TRUE))
 
@@ -308,6 +309,7 @@ class.task.list
 if(FALSE){
   if(require(future))plan("multisession")
 }
+if(require(lgr))get_logger("mlr3")$set_threshold("warn")
 (class.bench.result <- mlr3::benchmark(
   class.bench.grid, store_models = TRUE))
 
