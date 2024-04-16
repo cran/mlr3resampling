@@ -1,8 +1,8 @@
-\name{ResamplingSameOtherCV}
-\alias{ResamplingSameOtherCV}
-\title{Resampling for comparing training on same or other groups}
+\name{ResamplingSameOtherSizesCV}
+\alias{ResamplingSameOtherSizesCV}
+\title{Resampling for comparing train subsets and sizes}
 \description{
-  \code{\link{ResamplingSameOtherCV}}
+  \code{\link{ResamplingSameOtherSizesCV}}
   defines how a task is partitioned for
   resampling, for example in
   \code{\link[mlr3:resample]{resample()}} or
@@ -32,10 +32,16 @@
   test accuracy for each group; other is usually somewhat less accurate
   than same; other can be just as bad as featureless baseline when the
   groups have different patterns).
+
+  This class has more parameters/potential applications than
+  \code{\link{ResamplingSameOtherCV}} and
+  \code{\link{ResamplingVariableSizeTrainCV}},
+  which are older and should only be preferred
+  for visualization purposes.
 }
 \section{Stratification}{
 
-\code{\link{ResamplingSameOtherCV}} supports stratified sampling.
+\code{\link{ResamplingSameOtherSizesCV}} supports stratified sampling.
 The stratification variables are assumed to be discrete,
 and must be stored in the \link{Task} with column role \code{"stratum"}.
 In case of multiple stratification variables,
@@ -44,26 +50,58 @@ each combination of the values of the stratification variables forms a stratum.
 
 \section{Grouping}{
 
-\code{\link{ResamplingSameOtherCV}} supports grouping of observations.
+\code{\link{ResamplingSameOtherSizesCV}} supports grouping of observations.
 The grouping variable is assumed to be discrete,
 and must be stored in the \link{Task} with column role \code{"group"}.
 
-The number of cross-validation folds K should be defined as the
-\code{fold} parameter.
+}
 
-In each group, there will be about an equal number of observations
+\section{Subsets}{
+
+\code{\link{ResamplingSameOtherSizesCV}} supports training on different
+subsets of observations.
+The subset variable is assumed to be discrete,
+and must be stored in the \link{Task} with column role \code{"subset"}.
+
+}
+
+\section{Parameters}{
+
+The number of cross-validation folds K should be defined as the
+\code{fold} parameter, default 3.
+
+The number of random seeds for down-sampling should be defined as the
+\code{seeds} parameter, default 1.
+
+The ratio for down-sampling should be defined as the \code{ratio}
+parameter, default 0.5. The min size of same and other sets is
+repeatedly multiplied by this ratio, to obtain smaller sample sizes.
+
+The number of down-sampling sizes/multiplications should be defined as
+the \code{sizes} parameter, which can also take two special values:
+default -1 means no down-sampling at all, and 0 means only down-sampling
+to the sizes of the same/other sets.
+
+The \code{ignore_subset} parameter should be either \code{TRUE} or
+\code{FALSE} (default), whether to ignore the \code{subset}
+role. \code{TRUE} only creates splits for same subset (even if task
+defines \code{subset} role), and is useful for subtrain/validation
+splits (hyper-parameter learning). Note that this feature will work on a
+task with \code{stratum} and \code{group} roles (unlike
+\code{ResamplingCV}).
+
+In each subset, there will be about an equal number of observations
 assigned to each of the K folds.
-The assignments are stored in
-\verb{$instance$id.dt}.
 The train/test splits are defined by all possible combinations of
-test group, test fold, and train groups (same/other/all).
+test subset, test fold, train subsets (same/other/all), down-sampling
+sizes, and random seeds.
 The splits are stored in
 \verb{$instance$iteration.dt}.
 }
 
 \examples{
-same_other <- mlr3resampling::ResamplingSameOtherCV$new()
-same_other$param_set$values$folds <- 5
+same_other_sizes <- mlr3resampling::ResamplingSameOtherSizesCV$new()
+same_other_sizes$param_set$values$folds <- 5
 }
 \seealso{
   \itemize{

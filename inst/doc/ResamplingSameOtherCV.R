@@ -27,9 +27,12 @@ for(task_id in names(reg.pattern.list)){
   yname <- paste0("y_",task_id)
   reg.dt[, (yname) := f(x,person)+rnorm(N)][]
   task.dt <- reg.dt[, c("x","person",yname), with=FALSE]
-  reg.task.list[[task_id]] <- mlr3::TaskRegr$new(
-    task_id, task.dt, target=yname
-  )$set_col_roles("person",c("group","stratum"))
+  reg.task <- mlr3::TaskRegr$new(
+    task_id, task.dt, target=yname)
+  reg.task$col_roles$subset <- "person"
+  reg.task$col_roles$stratum <- "person"
+  reg.task$col_roles$feature <- "x"
+  reg.task.list[[task_id]] <- reg.task
 }
 reg.dt
 
@@ -85,7 +88,7 @@ if(require(animint2)){
   ggplot()+
     scale_x_log10()+
     geom_point(aes(
-      regr.mse, train.groups, color=algorithm),
+      regr.mse, train.subsets, color=algorithm),
       shape=1,
       data=reg.bench.score)+
     facet_grid(
@@ -139,11 +142,11 @@ set.colors <- c(
 algo.colors <- c(
   featureless="blue",
   rpart="red")
-make_person_group <- function(DT){
-  DT[, "person/group" := person]
+make_person_subset <- function(DT){
+  DT[, "person/subset" := person]
 }
-make_person_group(point.dt)
-make_person_group(reg.bench.score)
+make_person_subset(point.dt)
+make_person_subset(reg.bench.score)
 
 if(require(animint2)){
   viz <- animint(
@@ -160,11 +163,11 @@ if(require(animint2)){
         data=point.dt)+
       scale_color_manual(values=algo.colors)+
       geom_line(aes(
-        x, y, color=algorithm, group=paste(algorithm, iteration)),
+        x, y, color=algorithm, subset=paste(algorithm, iteration)),
         showSelected="iteration",
         data=pred.dt)+
       facet_grid(
-        task_id ~ `person/group`,
+        task_id ~ `person/subset`,
         labeller=label_both,
         space="free",
         scales="free")+
@@ -177,9 +180,9 @@ if(require(animint2)){
         "Mean squared error on test set")+
       scale_fill_manual(values=algo.colors)+
       scale_x_discrete(
-        "People/groups in train set")+
+        "People/subsets in train set")+
       geom_point(aes(
-        train.groups, regr.mse, fill=algorithm),
+        train.subsets, regr.mse, fill=algorithm),
         shape=1,
         size=5,
         stroke=2,
@@ -188,7 +191,7 @@ if(require(animint2)){
         clickSelects="iteration",
         data=reg.bench.score)+
       facet_grid(
-        task_id ~ `person/group`,
+        task_id ~ `person/subset`,
         labeller=label_both,
         scales="free"),
     diagram=ggplot()+
@@ -196,11 +199,11 @@ if(require(animint2)){
       theme_bw()+
       theme_animint(height=300)+
       facet_grid(
-        . ~ train.groups,
+        . ~ train.subsets,
         scales="free",
         space="free")+
-      scale_size_manual(values=c(group=3, fold=1))+
-      scale_color_manual(values=c(group="orange", fold="grey50"))+
+      scale_size_manual(values=c(subset=3, fold=1))+
+      scale_color_manual(values=c(subset="orange", fold="grey50"))+
       geom_rect(aes(
         xmin=-Inf, xmax=Inf,
         color=rows,
@@ -216,10 +219,10 @@ if(require(animint2)){
         clickSelects="iteration",
         data=inst$viz.set.dt)+
       geom_text(aes(
-        ifelse(rows=="group", Inf, -Inf),
+        ifelse(rows=="subset", Inf, -Inf),
         (display_row+display_end)/2,
-        hjust=ifelse(rows=="group", 1, 0),
-        label=paste0(rows, "=", ifelse(rows=="group", group, fold))),
+        hjust=ifelse(rows=="subset", 1, 0),
+        label=paste0(rows, "=", ifelse(rows=="subset", subset, fold))),
         data=data.table(train.name="same", inst$viz.rect.dt))+
       scale_x_continuous(
         "Split number / cross-validation iteration")+
@@ -282,12 +285,12 @@ for(task_id in c("easy","impossible")){
   feature.names <- grep(task_id, names(full.dt), value=TRUE)
   task.col.names <- c(feature.names, "label", "person")
   task.dt <- full.dt[, task.col.names, with=FALSE]
-  class.task.list[[task_id]] <- mlr3::TaskClassif$new(
-    task_id, task.dt, target="label"
-  )$set_col_roles(
-    "person",c("group","stratum")
-  )$set_col_roles(
-    "label",c("target","stratum"))
+  this.task <- mlr3::TaskClassif$new(
+    task_id, task.dt, target="label")
+  this.task$col_roles$subset <- "person"
+  this.task$col_roles$stratum <- c("person","label")
+  this.task$col_roles$feature <- setdiff(names(task.dt), this.task$col_roles$stratum)
+  class.task.list[[task_id]] <- this.task
 }
 class.task.list
 
@@ -321,7 +324,7 @@ class.bench.score[1]
 if(require(animint2)){
   ggplot()+
     geom_point(aes(
-      classif.ce, train.groups, color=algorithm),
+      classif.ce, train.subsets, color=algorithm),
       shape=1,
       data=class.bench.score)+
     facet_grid(
@@ -398,11 +401,11 @@ set.colors <- c(
 algo.colors <- c(
   featureless="blue",
   rpart="red")
-make_person_group <- function(DT){
-  DT[, "person/group" := person]
+make_person_subset <- function(DT){
+  DT[, "person/subset" := person]
 }
-make_person_group(class.point.dt)
-make_person_group(class.bench.score)
+make_person_subset(class.point.dt)
+make_person_subset(class.bench.score)
 if(require(animint2)){
   viz <- animint(
     title="Train/predict on subsets, classification",
@@ -420,12 +423,12 @@ if(require(animint2)){
         data=class.point.dt)+
       geom_path(aes(
         x1, x2, 
-        group=paste(algorithm, iteration, contour.i)),
+        subset=paste(algorithm, iteration, contour.i)),
         showSelected=c("iteration","algorithm"),
         color=algo.colors[["rpart"]],
         data=class.pred.dt)+
       facet_grid(
-        task_id ~ `person/group`,
+        task_id ~ `person/subset`,
         labeller=label_both,
         space="free",
         scales="free")+
@@ -440,13 +443,13 @@ if(require(animint2)){
         breaks=seq(0, 1, by=0.25))+
       scale_fill_manual(values=algo.colors)+
       scale_x_discrete(
-        "People/groups in train set")+
+        "People/subsets in train set")+
       geom_hline(aes(
         yintercept=yint),
         data=data.table(yint=0.5),
         color="grey50")+
       geom_point(aes(
-        train.groups, classif.ce, fill=algorithm),
+        train.subsets, classif.ce, fill=algorithm),
         shape=1,
         size=5,
         stroke=2,
@@ -455,18 +458,18 @@ if(require(animint2)){
         clickSelects="iteration",
         data=class.bench.score)+
       facet_grid(
-        task_id ~ `person/group`,
+        task_id ~ `person/subset`,
         labeller=label_both),
     diagram=ggplot()+
       ggtitle("Select train/test split")+
       theme_bw()+
       theme_animint(height=300)+
       facet_grid(
-        . ~ train.groups,
+        . ~ train.subsets,
         scales="free",
         space="free")+
-      scale_size_manual(values=c(group=3, fold=1))+
-      scale_color_manual(values=c(group="orange", fold="grey50"))+
+      scale_size_manual(values=c(subset=3, fold=1))+
+      scale_color_manual(values=c(subset="orange", fold="grey50"))+
       geom_rect(aes(
         xmin=-Inf, xmax=Inf,
         color=rows,
@@ -482,10 +485,10 @@ if(require(animint2)){
         clickSelects="iteration",
         data=inst$viz.set.dt)+
       geom_text(aes(
-        ifelse(rows=="group", Inf, -Inf),
+        ifelse(rows=="subset", Inf, -Inf),
         (display_row+display_end)/2,
-        hjust=ifelse(rows=="group", 1, 0),
-        label=paste0(rows, "=", ifelse(rows=="group", group, fold))),
+        hjust=ifelse(rows=="subset", 1, 0),
+        label=paste0(rows, "=", ifelse(rows=="subset", subset, fold))),
         data=data.table(train.name="same", inst$viz.rect.dt))+
       scale_x_continuous(
         "Split number / cross-validation iteration")+
