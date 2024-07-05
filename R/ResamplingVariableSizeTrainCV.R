@@ -20,10 +20,11 @@ ResamplingVariableSizeTrainCV = R6::R6Class(
         man = "ResamplingVariableSizeTrainCV")
     },
     instantiate = function(task) {
+      row_id <- fold <- prop <- . <- row_seed <- iteration <- train_min_size <- train_size <- train_size_i <- NULL
+      ## Above to avoid CRAN NOTEs.
       task = mlr3::assert_task(mlr3::as_task(task))
       strata <- if(is.null(task$strata)){
-        data.dt <- task$data()
-        data.table(N=nrow(data.dt), row_id=list(1:nrow(data.dt)))
+        data.table(N=task$nrow, row_id=list(seq_len(task$nrow)))
       }else task$strata
       strata.list <- lapply(strata$row_id, private$.sample, task = task)
       folds = private$.combine(strata.list)[order(row_id)]
