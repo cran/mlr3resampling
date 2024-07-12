@@ -311,9 +311,6 @@ if(require(ggplot2)){
 ## -----------------------------------------------------------------------------
 str(reg.task$col_roles)
 
-## ----error=TRUE, purl=TRUE----------------------------------------------------
-mlr3::ResamplingCV$new()$instantiate(reg.task)
-
 ## -----------------------------------------------------------------------------
 ignore.cv <- mlr3resampling::ResamplingSameOtherSizesCV$new()
 ignore.cv$param_set$values$ignore_subset <- TRUE
@@ -345,9 +342,6 @@ do_benchmark <- function(subtrain.valid.cv){
   same.other.result <- mlr3::benchmark(
     same.other.grid, store_models = TRUE)
 }
-
-## ----error=TRUE, purl=TRUE----------------------------------------------------
-do_benchmark(mlr3::ResamplingCV$new())
 
 ## -----------------------------------------------------------------------------
 ignore.cv <- mlr3resampling::ResamplingSameOtherSizesCV$new()

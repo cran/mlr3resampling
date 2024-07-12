@@ -1,7 +1,7 @@
 Package: mlr3resampling
 Type: Package
 Title: Resampling Algorithms for 'mlr3' Framework
-Version: 2024.7.3
+Version: 2024.7.7
 Authors@R: c(
     person("Toby", "Hocking",
      email="toby.hocking@r-project.org",
@@ -63,7 +63,7 @@ Suggests: ggplot2, animint2, mlr3tuning, lgr, future, testthat, knitr,
         markdown, nc, rpart, directlabels
 VignetteBuilder: knitr
 NeedsCompilation: no
-Packaged: 2024-07-05 18:55:12 UTC; tdhock
+Packaged: 2024-07-11 15:28:03 UTC; tdhock
 Author: Toby Hocking [aut, cre] (<https://orcid.org/0000-0002-3146-0865>),
   Michel Lang [ctb] (<https://orcid.org/0000-0001-9754-0393>, Author of
     mlr3 when Resampling/ResamplingCV was copied/modified),
@@ -92,4 +92,4 @@ Author: Toby Hocking [aut, cre] (<https://orcid.org/0000-0002-3146-0865>),
     Author of mlr3 when Resampling/ResamplingCV was copied/modified)
 Maintainer: Toby Hocking <toby.hocking@r-project.org>
 Repository: CRAN
-Date/Publication: 2024-07-05 22:10:01 UTC
+Date/Publication: 2024-07-12 15:50:02 UTC
