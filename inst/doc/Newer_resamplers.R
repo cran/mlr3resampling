@@ -41,14 +41,15 @@ table(group.tab <- task.dt$random_group)
 ## -----------------------------------------------------------------------------
 reg.task <- mlr3::TaskRegr$new(
   "sin", task.dt, target="y")
-reg.task$col_roles$subset <- "random_group"
 reg.task$col_roles$group <- "agroup"
 reg.task$col_roles$stratum <- "random_group"
 reg.task$col_roles$feature <- "x"
-str(reg.task$col_roles)
 
 ## -----------------------------------------------------------------------------
 same_other_sizes_cv <- mlr3resampling::ResamplingSameOtherSizesCV$new()
+reg.task$col_roles$subset <- "random_group" 
+
+## -----------------------------------------------------------------------------
 same_other_sizes_cv$instantiate(reg.task)
 same_other_sizes_cv$instance$iteration.dt
 
@@ -81,7 +82,6 @@ if(require(ggplot2)){
       label=sprintf("n.train=%d ", n.train)),
       hjust=1,
       vjust=1.5,
-      shape=1,
       data=same.other.score[algorithm=="featureless" & test.fold==1])+
     facet_grid(. ~ test.subset, labeller=label_both, scales="free")+
     scale_x_log10(
@@ -100,7 +100,6 @@ if(require(ggplot2)){
       regr.mse_mean+regr.mse_sd, train.subsets,
       xend=regr.mse_mean-regr.mse_sd, yend=train.subsets,
       color=algorithm),
-      shape=1,
       data=same.other.wide)+
     geom_point(aes(
       regr.mse_mean, train.subsets, color=algorithm),
@@ -111,7 +110,6 @@ if(require(ggplot2)){
       label=sprintf("n.train=%d ", n.train)),
       hjust=1,
       vjust=1.5,
-      shape=1,
       data=same.other.score[algorithm=="featureless" & test.fold==1])+
     facet_grid(. ~ test.subset, labeller=label_both, scales="free")+
     scale_x_log10(
@@ -124,7 +122,7 @@ if(require(ggplot2)){
     geom_line(aes(
       n.train, regr.mse,
       color=algorithm,
-      subset=paste(algorithm, test.fold)),
+      group=paste(algorithm, test.fold)),
       data=same.other.score)+
     geom_label(aes(
       n.train, regr.mse,
@@ -173,7 +171,7 @@ if(require(ggplot2)){
     geom_line(aes(
       n.train, regr.mse,
       color=algorithm,
-      subset=paste(algorithm, test.fold)),
+      group=paste(algorithm, test.fold)),
       data=same.other.score)+
     geom_point(aes(
       n.train, regr.mse,
@@ -284,7 +282,7 @@ if(require(ggplot2)){
       data=same.other.score)+
     geom_line(aes(
       n.train.groups, regr.mse,
-      subset=paste(train.subsets, seed, algorithm),
+      group=paste(train.subsets, seed, algorithm),
       linetype=algorithm,
       color=train.subsets),
       data=same.other.score)+
@@ -301,7 +299,7 @@ if(require(ggplot2)){
       data=rpart.score)+
     geom_line(aes(
       n.train.groups, regr.mse,
-      subset=paste(train.subsets, seed, algorithm),
+      group=paste(train.subsets, seed, algorithm),
       color=train.subsets),
       data=rpart.score)+
     facet_grid(test.fold ~ test.subset, labeller=label_both)+
@@ -361,7 +359,6 @@ if(require(ggplot2)){
     geom_segment(aes(
       regr.mse_mean+regr.mse_sd, train.subsets,
       xend=regr.mse_mean-regr.mse_sd, yend=train.subsets),
-      shape=1,
       data=same.other.wide)+
     geom_point(aes(
       regr.mse_mean, train.subsets),

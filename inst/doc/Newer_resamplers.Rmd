@@ -62,33 +62,47 @@ table(group.tab <- task.dt$random_group)
 ```
 
 The output above shows the number of rows in each random group. 
-Below we define a task using that group,
+Below we define a task,
 
 ```{r}
 reg.task <- mlr3::TaskRegr$new(
   "sin", task.dt, target="y")
-reg.task$col_roles$subset <- "random_group"
 reg.task$col_roles$group <- "agroup"
 reg.task$col_roles$stratum <- "random_group"
 reg.task$col_roles$feature <- "x"
-str(reg.task$col_roles)
 ```
 
-Below we define the cross-validation object, and instantiate it, in
+Note that if we assign the `subset` role at this point, we will get an
+error, because this is not a standard mlr3 role.
+
+
+```{r error=TRUE, purl=FALSE}
+reg.task$col_roles$subset <- "random_group" 
+```
+
+Below we define the cross-validation object, which loads the
+mlr3resampling package, and then we assign the random group column to
+be used as the `subset` role.
+
+```{r}
+same_other_sizes_cv <- mlr3resampling::ResamplingSameOtherSizesCV$new()
+reg.task$col_roles$subset <- "random_group" 
+```
+
+Below we instantiate the resampler, in
 order to show details about how it works (but normally you should not
 instantiate it yourself, as this will be done automatically inside the
 call to `mlr3::benchmark`).
 
 ```{r}
-same_other_sizes_cv <- mlr3resampling::ResamplingSameOtherSizesCV$new()
 same_other_sizes_cv$instantiate(reg.task)
 same_other_sizes_cv$instance$iteration.dt
 ```
 
 So using the K-fold cross-validation, we will do one train/test split
 for each row of the table above. There is one row for each combination
-of test subset (A/B/C), train subset (same/other/all), and test fold
-(1/2/3).
+of test subset (A, B, C), train subset (same, other, all), and test fold
+(1, 2, 3).
 
 We compute and plot the results using the code below,
 
@@ -121,7 +135,6 @@ if(require(ggplot2)){
       label=sprintf("n.train=%d ", n.train)),
       hjust=1,
       vjust=1.5,
-      shape=1,
       data=same.other.score[algorithm=="featureless" & test.fold==1])+
     facet_grid(. ~ test.subset, labeller=label_both, scales="free")+
     scale_x_log10(
@@ -140,7 +153,6 @@ if(require(ggplot2)){
       regr.mse_mean+regr.mse_sd, train.subsets,
       xend=regr.mse_mean-regr.mse_sd, yend=train.subsets,
       color=algorithm),
-      shape=1,
       data=same.other.wide)+
     geom_point(aes(
       regr.mse_mean, train.subsets, color=algorithm),
@@ -151,7 +163,6 @@ if(require(ggplot2)){
       label=sprintf("n.train=%d ", n.train)),
       hjust=1,
       vjust=1.5,
-      shape=1,
       data=same.other.score[algorithm=="featureless" & test.fold==1])+
     facet_grid(. ~ test.subset, labeller=label_both, scales="free")+
     scale_x_log10(
@@ -188,7 +199,7 @@ if(require(ggplot2)){
     geom_line(aes(
       n.train, regr.mse,
       color=algorithm,
-      subset=paste(algorithm, test.fold)),
+      group=paste(algorithm, test.fold)),
       data=same.other.score)+
     geom_label(aes(
       n.train, regr.mse,
@@ -233,7 +244,7 @@ same_other_sizes_cv$instance$iteration.dt
 So using the K-fold cross-validation, we will do one train/test split
 for each row of the table above. There is one row for each combination
 of `n.train.groups` (full train set size + 5 smaller sizes), and test
-fold (1/2/3).
+fold (1, 2, 3).
 
 We compute and plot the results using the code below,
 
@@ -260,7 +271,7 @@ if(require(ggplot2)){
     geom_line(aes(
       n.train, regr.mse,
       color=algorithm,
-      subset=paste(algorithm, test.fold)),
+      group=paste(algorithm, test.fold)),
       data=same.other.score)+
     geom_point(aes(
       n.train, regr.mse,
@@ -400,7 +411,7 @@ if(require(ggplot2)){
       data=same.other.score)+
     geom_line(aes(
       n.train.groups, regr.mse,
-      subset=paste(train.subsets, seed, algorithm),
+      group=paste(train.subsets, seed, algorithm),
       linetype=algorithm,
       color=train.subsets),
       data=same.other.score)+
@@ -417,7 +428,7 @@ if(require(ggplot2)){
       data=rpart.score)+
     geom_line(aes(
       n.train.groups, regr.mse,
-      subset=paste(train.subsets, seed, algorithm),
+      group=paste(train.subsets, seed, algorithm),
       color=train.subsets),
       data=rpart.score)+
     facet_grid(test.fold ~ test.subset, labeller=label_both)+
@@ -510,7 +521,6 @@ if(require(ggplot2)){
     geom_segment(aes(
       regr.mse_mean+regr.mse_sd, train.subsets,
       xend=regr.mse_mean-regr.mse_sd, yend=train.subsets),
-      shape=1,
       data=same.other.wide)+
     geom_point(aes(
       regr.mse_mean, train.subsets),

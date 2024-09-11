@@ -9,6 +9,7 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
+mlr3resampling::ResamplingSameOtherCV$new()
 
 ## -----------------------------------------------------------------------------
 N <- 300
