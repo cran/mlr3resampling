@@ -67,14 +67,17 @@ if(requireNamespace("rpart")){
 lgr::get_logger("mlr3")$set_threshold("warn")
 (same.other.result <- mlr3::benchmark(
   same.other.grid, store_models = TRUE))
-same.other.score <- mlr3resampling::score(same.other.result)
+same.other.score <- mlr3resampling::score(
+  same.other.result, mlr3::msr("regr.rmse"))
+plot(same.other.score)
+
+## -----------------------------------------------------------------------------
 same.other.score[, n.train := sapply(train, length)]
 same.other.score[1]
-
 if(require(ggplot2)){
   ggplot()+
     geom_point(aes(
-      regr.mse, train.subsets, color=algorithm),
+      regr.rmse, train.subsets, color=algorithm),
       shape=1,
       data=same.other.score)+
     geom_text(aes(
@@ -84,25 +87,25 @@ if(require(ggplot2)){
       vjust=1.5,
       data=same.other.score[algorithm=="featureless" & test.fold==1])+
     facet_grid(. ~ test.subset, labeller=label_both, scales="free")+
-    scale_x_log10(
-      "Mean squared prediction error (test set)")
+    scale_x_continuous(
+      "Root mean squared prediction error (test set)")
 }
 
+## -----------------------------------------------------------------------------
 same.other.wide <- dcast(
   same.other.score,
   algorithm + test.subset + train.subsets ~ .,
   list(mean, sd),
-  value.var="regr.mse")
-
+  value.var="regr.rmse")
 if(require(ggplot2)){
   ggplot()+
     geom_segment(aes(
-      regr.mse_mean+regr.mse_sd, train.subsets,
-      xend=regr.mse_mean-regr.mse_sd, yend=train.subsets,
+      regr.rmse_mean+regr.rmse_sd, train.subsets,
+      xend=regr.rmse_mean-regr.rmse_sd, yend=train.subsets,
       color=algorithm),
       data=same.other.wide)+
     geom_point(aes(
-      regr.mse_mean, train.subsets, color=algorithm),
+      regr.rmse_mean, train.subsets, color=algorithm),
       shape=1,
       data=same.other.wide)+
     geom_text(aes(
@@ -112,26 +115,30 @@ if(require(ggplot2)){
       vjust=1.5,
       data=same.other.score[algorithm=="featureless" & test.fold==1])+
     facet_grid(. ~ test.subset, labeller=label_both, scales="free")+
-    scale_x_log10(
-      "Mean squared prediction error (test set)")
+    scale_x_continuous(
+      "Root mean squared prediction error (test set)")
 }
+
+## -----------------------------------------------------------------------------
+plist <- mlr3resampling::pvalue(same.other.score, digits=3)
+plot(plist)
 
 ## -----------------------------------------------------------------------------
 if(require(ggplot2)){
   ggplot()+
     geom_line(aes(
-      n.train, regr.mse,
+      n.train, regr.rmse,
       color=algorithm,
       group=paste(algorithm, test.fold)),
       data=same.other.score)+
     geom_label(aes(
-      n.train, regr.mse,
+      n.train, regr.rmse,
       color=algorithm,
       label=train.subsets),
       data=same.other.score)+
     facet_grid(. ~ test.subset, labeller=label_both, scales="free")+
-    scale_y_log10(
-      "Mean squared prediction error (test set)")
+    scale_y_continuous(
+      "Root mean squared prediction error (test set)")
 }
 
 ## -----------------------------------------------------------------------------
@@ -162,27 +169,28 @@ if(requireNamespace("rpart")){
 lgr::get_logger("mlr3")$set_threshold("warn")
 (same.other.result <- mlr3::benchmark(
   same.other.grid, store_models = TRUE))
-same.other.score <- mlr3resampling::score(same.other.result)
+same.other.score <- mlr3resampling::score(
+  same.other.result, mlr3::msr("regr.rmse"))
 same.other.score[, n.train := sapply(train, length)]
 same.other.score[1]
 
 if(require(ggplot2)){
   ggplot()+
     geom_line(aes(
-      n.train, regr.mse,
+      n.train, regr.rmse,
       color=algorithm,
       group=paste(algorithm, test.fold)),
       data=same.other.score)+
     geom_point(aes(
-      n.train, regr.mse,
+      n.train, regr.rmse,
       color=algorithm),
       data=same.other.score)+
     facet_grid(. ~ test.subset, labeller=label_both, scales="free")+
     scale_x_log10(
       "Number of train rows",
       breaks=unique(same.other.score$n.train))+
-    scale_y_log10(
-      "Mean squared prediction error (test set)")
+    scale_y_continuous(
+      "Root mean squared prediction error (test set)")
 }
 
 ## ----simulationShort----------------------------------------------------------
@@ -236,14 +244,15 @@ if(requireNamespace("rpart")){
 lgr::get_logger("mlr3")$set_threshold("warn")
 (same.other.result <- mlr3::benchmark(
   same.other.grid, store_models = TRUE))
-same.other.score <- mlr3resampling::score(same.other.result)
+same.other.score <- mlr3resampling::score(
+  same.other.result, mlr3::msr("regr.rmse"))
 same.other.score[1]
 
 ## -----------------------------------------------------------------------------
 if(require(ggplot2)){
 ggplot()+
   geom_point(aes(
-    regr.mse, train.subsets, color=algorithm),
+    regr.rmse, train.subsets, color=algorithm),
     shape=1,
     data=same.other.score[groups==n.train.groups])+
   facet_grid(. ~ test.subset, labeller=label_both)
@@ -256,7 +265,7 @@ same.other.score[, subset.N.fac := factor(subset.N, levs)]
 if(require(ggplot2)){
   ggplot()+
     geom_point(aes(
-      regr.mse, subset.N.fac, color=algorithm),
+      regr.rmse, subset.N.fac, color=algorithm),
       shape=1,
       data=same.other.score)+
     facet_wrap("test.subset", labeller=label_both, scales="free", nrow=1)
@@ -266,7 +275,7 @@ same.other.score[, N.subset.fac := factor(subset.N, levs)]
 if(require(ggplot2)){
   ggplot()+
     geom_point(aes(
-      regr.mse, N.subset.fac, color=algorithm),
+      regr.rmse, N.subset.fac, color=algorithm),
       shape=1,
       data=same.other.score)+
     facet_wrap("test.subset", labeller=label_both, scales="free", nrow=1)
@@ -276,34 +285,32 @@ if(require(ggplot2)){
 if(require(ggplot2)){
   ggplot()+
     geom_point(aes(
-      n.train.groups, regr.mse,
+      n.train.groups, regr.rmse,
       color=train.subsets),
       shape=1,
       data=same.other.score)+
     geom_line(aes(
-      n.train.groups, regr.mse,
+      n.train.groups, regr.rmse,
       group=paste(train.subsets, seed, algorithm),
       linetype=algorithm,
       color=train.subsets),
       data=same.other.score)+
-    facet_grid(test.fold ~ test.subset, labeller=label_both)+
-    scale_x_log10()
+    facet_grid(test.fold ~ test.subset, labeller=label_both)
 }
 rpart.score <- same.other.score[algorithm=="rpart" & train.subsets != "other"]
 if(require(ggplot2)){
   ggplot()+
     geom_point(aes(
-      n.train.groups, regr.mse,
+      n.train.groups, regr.rmse,
       color=train.subsets),
       shape=1,
       data=rpart.score)+
     geom_line(aes(
-      n.train.groups, regr.mse,
+      n.train.groups, regr.rmse,
       group=paste(train.subsets, seed, algorithm),
       color=train.subsets),
       data=rpart.score)+
-    facet_grid(test.fold ~ test.subset, labeller=label_both)+
-    scale_x_log10()
+    facet_grid(test.fold ~ test.subset, labeller=label_both)
 }
 
 ## -----------------------------------------------------------------------------
@@ -329,7 +336,7 @@ do_benchmark <- function(subtrain.valid.cv){
         tuner = mlr3tuning::tnr("grid_search"), #mlr3tuning::TunerBatchGridSearch$new()
         learner = rpart.learner,
         resampling = subtrain.valid.cv,
-        measure = mlr3::msr("regr.mse"))
+        measure = mlr3::msr("regr.rmse"))
     }
   }
   same.other.grid <- mlr3::benchmark_grid(
@@ -347,21 +354,22 @@ ignore.cv$param_set$values$ignore_subset <- TRUE
 (same.other.result <- do_benchmark(ignore.cv))
 
 ## -----------------------------------------------------------------------------
-same.other.score <- mlr3resampling::score(same.other.result)
+same.other.score <- mlr3resampling::score(
+  same.other.result, mlr3::msr("regr.rmse"))
 same.other.score[1]
 same.other.wide <- dcast(
   same.other.score,
   algorithm + test.subset + train.subsets ~ .,
   list(mean, sd),
-  value.var="regr.mse")
+  value.var="regr.rmse")
 if(require(ggplot2)){
   ggplot()+
     geom_segment(aes(
-      regr.mse_mean+regr.mse_sd, train.subsets,
-      xend=regr.mse_mean-regr.mse_sd, yend=train.subsets),
+      regr.rmse_mean+regr.rmse_sd, train.subsets,
+      xend=regr.rmse_mean-regr.rmse_sd, yend=train.subsets),
       data=same.other.wide)+
     geom_point(aes(
-      regr.mse_mean, train.subsets),
+      regr.rmse_mean, train.subsets),
       shape=1,
       data=same.other.wide)+
     facet_grid(algorithm ~ test.subset, labeller=label_both)
@@ -495,6 +503,9 @@ if(require(ggplot2)){
 }
 
 ## -----------------------------------------------------------------------------
+plot(score.dt)
+
+## -----------------------------------------------------------------------------
 score.wide <- dcast(
   score.long,
   algorithm + test.subset + train.subsets + variable ~ .,
@@ -519,6 +530,14 @@ if(require(ggplot2)){
     scale_x_continuous(
       "Mean +/- SD of test accuracy/AUC over folds/splits")
 }
+
+## -----------------------------------------------------------------------------
+AZ_pval <- mlr3resampling::pvalue(score.dt, digits=3)
+plot(AZ_pval)
+
+## -----------------------------------------------------------------------------
+AZ_pval_AUC <- mlr3resampling::pvalue(score.dt, "classif.auc", digits=3)
+plot(AZ_pval_AUC)
 
 ## -----------------------------------------------------------------------------
 sessionInfo()

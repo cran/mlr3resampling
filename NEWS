@@ -1,3 +1,17 @@
+Changes in version 2025.3.30
+
+- new plot() method for score().
+- pvalue() with plot() method.
+- ResamplingSameOtherSizesCV gains subsets parameter which specifies which subsets to use for training: S, O, A, SO, SA, SOA (S=same, O=other, A=All).
+
+Changes in version 2024.10.28
+
+- .onLoad, add mlr3resampling to mlr3_reflections$loaded_packages, thanks @be-marc for the idea, https://github.com/tdhock/mlr3resampling/issues/17
+
+Changes in version 2024.10.22
+
+- update docs, group -> subset.
+
 Changes in version 2024.9.6
 
 - .onLoad, add subset to mlr3_reflections$task_col_roles for classif and regr.

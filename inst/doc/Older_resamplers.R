@@ -100,7 +100,7 @@ if(require(animint2)){
 
 ## ----SimulationsAnimintRegression---------------------------------------------
 inst <- reg.bench.score$resampling[[1]]$instance
-rect.expand <- 0.2
+rect.expand <- 0.3
 grid.dt <- data.table(x=seq(-abs.x, abs.x, l=101), y=0)
 grid.task <- mlr3::TaskRegr$new("grid", grid.dt, target="y")
 pred.dt.list <- list()
@@ -151,7 +151,8 @@ make_person_subset(reg.bench.score)
 
 if(require(animint2)){
   viz <- animint(
-    title="Train/predict on subsets, regression",
+    title="SOAK algorithm: train/predict on subsets, regression",
+    video="https://vimeo.com/1053413000",
     pred=ggplot()+
       ggtitle("Predictions for selected train/test split")+
       theme_animint(height=400)+
@@ -160,11 +161,14 @@ if(require(animint2)){
         x, y, fill=set.name),
         showSelected="iteration",
         size=3,
+        help="One dot for each train/test/unused data point.",
         shape=21,
         data=point.dt)+
       scale_color_manual(values=algo.colors)+
       geom_line(aes(
-        x, y, color=algorithm, subset=paste(algorithm, iteration)),
+        x, y, color=algorithm,
+        group=paste(algorithm, iteration)),
+        help="One line for each learned prediction function.",
         showSelected="iteration",
         data=pred.dt)+
       facet_grid(
@@ -172,11 +176,15 @@ if(require(animint2)){
         labeller=label_both,
         space="free",
         scales="free")+
+      scale_x_continuous(
+        "x = input/feature in regression")+
       scale_y_continuous(
+        "y = output to predict in regression",
         breaks=seq(-100, 100, by=2)),
     err=ggplot()+
       ggtitle("Test error for each split")+
-      theme_animint(height=400)+
+      theme_animint(height=400, width=350)+
+      guides(fill="none")+
       scale_y_log10(
         "Mean squared error on test set")+
       scale_fill_manual(values=algo.colors)+
@@ -184,11 +192,13 @@ if(require(animint2)){
         "People/subsets in train set")+
       geom_point(aes(
         train.subsets, regr.mse, fill=algorithm),
+        help="One dot per test set and learning algorithm.",
         shape=1,
         size=5,
         stroke=2,
         color="black",
         color_off=NA,
+        showSelected="algorithm",
         clickSelects="iteration",
         data=reg.bench.score)+
       facet_grid(
@@ -198,7 +208,7 @@ if(require(animint2)){
     diagram=ggplot()+
       ggtitle("Select train/test split")+
       theme_bw()+
-      theme_animint(height=300)+
+      theme_animint(height=400, width=300)+
       facet_grid(
         . ~ train.subsets,
         scales="free",
@@ -210,26 +220,35 @@ if(require(animint2)){
         color=rows,
         size=rows,
         ymin=display_row, ymax=display_end),
+        help="One rect per chunk of data with common fold (grey) and subset (gold).",
         fill=NA,
         data=inst$viz.rect.dt)+
       scale_fill_manual(values=set.colors)+
+      geom_text(aes(
+        x=ifelse(rows=="subset", Inf, -Inf),
+        y=(display_row+display_end)/2,
+        hjust=ifelse(rows=="subset", 1, 0),
+        label=paste0(rows, "=", ifelse(rows=="subset", subset, fold))),
+        help="Text labels indicate chunks of data with common fold (grey) and subset (gold).",
+        showSelected="rows",
+        data=data.table(train.name="same", inst$viz.rect.dt))+
       geom_rect(aes(
         xmin=iteration-rect.expand, ymin=display_row,
         xmax=iteration+rect.expand, ymax=display_end,
         fill=set.name),
+        help="One rect per chunk of data assigned to train/test set in cross-validation.",
+        alpha=0.5,
+        alpha_off=0.5,
+        color="black",
+        color_off=NA,
         clickSelects="iteration",
         data=inst$viz.set.dt)+
-      geom_text(aes(
-        ifelse(rows=="subset", Inf, -Inf),
-        (display_row+display_end)/2,
-        hjust=ifelse(rows=="subset", 1, 0),
-        label=paste0(rows, "=", ifelse(rows=="subset", subset, fold))),
-        data=data.table(train.name="same", inst$viz.rect.dt))+
       scale_x_continuous(
-        "Split number / cross-validation iteration")+
+        "Split number",
+        breaks=c(1,6, 7,12, 13,18))+
       scale_y_continuous(
         "Row number"),
-    source="https://github.com/tdhock/mlr3resampling/blob/main/vignettes/ResamplingSameOtherCV.Rmd")
+    source="https://github.com/tdhock/mlr3resampling/blob/main/vignettes/Older_resamplers.Rmd")
   viz
 }
 if(FALSE){
@@ -336,7 +355,7 @@ if(require(animint2)){
 
 ## ----SimulationsAnimintClassification-----------------------------------------
 inst <- class.bench.score$resampling[[1]]$instance
-rect.expand <- 0.2
+rect.expand <- 0.3
 grid.value.dt <- scatter.dt[
 , lapply(.SD, function(x)do.call(seq, c(as.list(range(x)), l=21)))
 , .SDcols=c("x1","x2")]
@@ -409,23 +428,26 @@ make_person_subset(class.point.dt)
 make_person_subset(class.bench.score)
 if(require(animint2)){
   viz <- animint(
-    title="Train/predict on subsets, classification",
+    title="SOAK algorithm: train/predict on subsets, classification",
+    video="https://vimeo.com/manage/videos/1053464329",
     pred=ggplot()+
       ggtitle("Predictions for selected train/test split")+
-      theme_animint(height=400)+
+      theme_animint(height=350, width=350)+
       scale_fill_manual(values=set.colors)+
       scale_color_manual(values=c(spam="black","not spam"="white"))+
       geom_point(aes(
         x1, x2, color=label, fill=set.name),
         showSelected="iteration",
         size=3,
+        help="One dot for each train/test/unused data point.",
         stroke=2,
         shape=21,
         data=class.point.dt)+
       geom_path(aes(
         x1, x2, 
-        subset=paste(algorithm, iteration, contour.i)),
+        group=paste(algorithm, iteration, contour.i)),
         showSelected=c("iteration","algorithm"),
+        help="Red path represents decision boundary of rpart decision tree learning algorithm.",
         color=algo.colors[["rpart"]],
         data=class.pred.dt)+
       facet_grid(
@@ -437,7 +459,7 @@ if(require(animint2)){
         breaks=seq(-100, 100, by=2)),
     err=ggplot()+
       ggtitle("Test error for each split")+
-      theme_animint(height=400)+
+      theme_animint(height=350, width=350)+
       theme(panel.margin=grid::unit(1, "lines"))+
       scale_y_continuous(
         "Classification error on test set",
@@ -447,10 +469,12 @@ if(require(animint2)){
         "People/subsets in train set")+
       geom_hline(aes(
         yintercept=yint),
+        help="Horizontal lines highlight baseline error rate of 50%.",
         data=data.table(yint=0.5),
         color="grey50")+
       geom_point(aes(
         train.subsets, classif.ce, fill=algorithm),
+        help="One dot per test set and learning algorithm.",
         shape=1,
         size=5,
         stroke=2,
@@ -464,7 +488,7 @@ if(require(animint2)){
     diagram=ggplot()+
       ggtitle("Select train/test split")+
       theme_bw()+
-      theme_animint(height=300)+
+      theme_animint(height=350, width=300)+
       facet_grid(
         . ~ train.subsets,
         scales="free",
@@ -476,26 +500,35 @@ if(require(animint2)){
         color=rows,
         size=rows,
         ymin=display_row, ymax=display_end),
+        help="One rect per chunk of data with common fold (grey) and subset (gold).",
         fill=NA,
         data=inst$viz.rect.dt)+
       scale_fill_manual(values=set.colors)+
+      geom_text(aes(
+        x=ifelse(rows=="subset", Inf, -Inf),
+        y=(display_row+display_end)/2,
+        hjust=ifelse(rows=="subset", 1, 0),
+        label=paste0(rows, "=", ifelse(rows=="subset", subset, fold))),
+        help="Text labels indicate chunks of data with common fold (grey) and subset (gold).",
+        showSelected="rows",
+        data=data.table(train.name="same", inst$viz.rect.dt))+
       geom_rect(aes(
         xmin=iteration-rect.expand, ymin=display_row,
         xmax=iteration+rect.expand, ymax=display_end,
         fill=set.name),
+        help="One rect per chunk of data assigned to train/test set in cross-validation.",
+        alpha=0.5,
+        alpha_off=0.5,
+        color="black",
+        color_off=NA,
         clickSelects="iteration",
         data=inst$viz.set.dt)+
-      geom_text(aes(
-        ifelse(rows=="subset", Inf, -Inf),
-        (display_row+display_end)/2,
-        hjust=ifelse(rows=="subset", 1, 0),
-        label=paste0(rows, "=", ifelse(rows=="subset", subset, fold))),
-        data=data.table(train.name="same", inst$viz.rect.dt))+
       scale_x_continuous(
-        "Split number / cross-validation iteration")+
+        "Split number / cross-validation iteration",
+        breaks=c(1,6, 7,12, 13,18))+
       scale_y_continuous(
         "Row number"),
-    source="https://github.com/tdhock/mlr3resampling/blob/main/vignettes/ResamplingSameOtherCV.Rmd")
+    source="https://github.com/tdhock/mlr3resampling/blob/main/vignettes/Older_resamplers.Rmd")
   viz
 }
 if(FALSE){
@@ -673,6 +706,7 @@ if(require(animint2)){
       scale_fill_manual(values=set.colors)+
       geom_point(aes(
         x, y, fill=set.name),
+        help="One dot per sample in train/test/unused set.",
         showSelected="iteration",
         size=3,
         shape=21,
@@ -686,6 +720,7 @@ if(require(animint2)){
         color=algorithm,
         size=algorithm,
         group=paste(algorithm, iteration)),
+        help="One line per learned prediction function.",
         showSelected="iteration",
         data=pred.dt)+
       facet_grid(
@@ -707,6 +742,7 @@ if(require(animint2)){
         train_size, regr.mse,
         group=paste(algorithm, seed),
         color=algorithm),
+        help="One line per algorithm and random seed used to order train set.",
         clickSelects="seed",
         alpha_off=0.2,
         showSelected="algorithm",
@@ -719,6 +755,7 @@ if(require(animint2)){
       geom_point(aes(
         train_size, regr.mse,
         color=algorithm),
+        help="One point per algorithm and train set size, for the selected random ordering.",
         size=5,
         stroke=3,
         fill="black",
@@ -726,7 +763,8 @@ if(require(animint2)){
         showSelected=c("algorithm","seed"),
         clickSelects="iteration",
         data=reg.bench.score),
-    source="https://github.com/tdhock/mlr3resampling/blob/main/vignettes/Simulations.Rmd")
+    video="https://vimeo.com/manage/videos/1053467310",
+    source="https://github.com/tdhock/mlr3resampling/blob/main/vignettes/Older_resamplers.Rmd")
   viz
 }
 if(FALSE){
@@ -734,7 +772,7 @@ if(FALSE){
 }
 
 ## -----------------------------------------------------------------------------
-class.N <- 300
+class.N <- 900
 class.abs.x <- 1
 rclass <- function(){
   runif(class.N, -class.abs.x, class.abs.x)
@@ -812,9 +850,13 @@ if(require(animint2)){
       data=class.bench.score)+
     facet_grid(
       task_id ~ test.fold,
-      labeller=label_both,
-      scales="free")+
-    scale_x_log10()
+      labeller=label_both)+
+    scale_x_log10(
+      breaks=unique(class.bench.score$train_size))+
+    scale_y_continuous(
+      "Test error rate",
+      limits=c(0.1,0.6),
+      breaks=seq(0.1,0.6,by=0.1))
 }
 
 ## ----ResamplingVariableSizeTrainCVAnimintClassification-----------------------
@@ -888,6 +930,7 @@ if(require(animint2)){
       geom_point(aes(
         x1, x2, color=y, fill=set.name),
         showSelected="iteration",
+        help="One dot per data sample in the train/test/unused set.",
         size=3,
         stroke=2,
         shape=21,
@@ -896,6 +939,7 @@ if(require(animint2)){
         x1, x2, 
         group=paste(algorithm, iteration, contour.i)),
         showSelected=c("iteration","algorithm"),
+        help="Red path represents decision boundary of rpart decision tree learning algorithm.",
         color=algo.colors[["rpart"]],
         data=class.pred.dt)+
       facet_grid(
@@ -908,14 +952,18 @@ if(require(animint2)){
       theme_animint(height=400)+
       theme(panel.margin=grid::unit(1, "lines"))+
       scale_y_continuous(
-        "Classification error on test set")+
+        "Classification error on test set",
+        limits=c(0.1,0.6),
+        breaks=seq(0.1,0.6,by=0.1))+
       scale_color_manual(values=algo.colors)+
       scale_x_log10(
-        "Train set size")+
+        "Train set size",
+        breaks=unique(class.bench.score$train_size))+
       geom_line(aes(
         train_size, classif.ce,
         group=paste(algorithm, seed),
         color=algorithm),
+        help="One line per algorithm and random seed used to order train set.",
         clickSelects="seed",
         alpha_off=0.2,
         showSelected="algorithm",
@@ -932,10 +980,12 @@ if(require(animint2)){
         stroke=3,
         fill="black",
         fill_off=NA,
+        help="One point per algorithm and train set size, for the selected random ordering.",
         showSelected=c("algorithm","seed"),
         clickSelects="iteration",
         data=class.bench.score),
-    source="https://github.com/tdhock/mlr3resampling/blob/main/vignettes/ResamplingVariableSizeTrainCV.Rmd")
+    video="https://vimeo.com/1053477025",
+    source="https://github.com/tdhock/mlr3resampling/blob/main/vignettes/Older_resamplers.Rmd")
   viz
 }
 if(FALSE){

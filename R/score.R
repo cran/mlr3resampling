@@ -10,5 +10,27 @@ score <- function(bench.result, ...){
       bench.row, on="iteration"
     ][, algorithm := sub(".*[.]", "", learner_id)]
   }
-  rbindlist(out.dt.list)
+  out <- rbindlist(out.dt.list)
+  class(out) <- c("score", class(out))
+  out
 }
+
+plot.score <- function(x, ..., value.var=NULL){
+  value <- train.subsets <- NULL
+  if(requireNamespace("ggplot2")){
+    if(is.null(value.var)){
+      value.var <- grep("classif|regr", names(x), value=TRUE)[1]
+    }
+    dt <- data.table(x)[, value := get(value.var)][]
+    ggplot2::ggplot()+
+      ggplot2::geom_point(ggplot2::aes(
+        value, train.subsets),
+        shape=1,
+        data=dt)+
+      ggplot2::facet_grid(
+        algorithm ~ task_id + test.subset,
+        labeller=ggplot2::label_both,
+        scales="free")+
+      ggplot2::scale_x_continuous(value.var)
+  }
+}  
