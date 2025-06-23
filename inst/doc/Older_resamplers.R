@@ -1,6 +1,6 @@
 ## ----setup, include = FALSE---------------------------------------------------
 knitr::opts_chunk$set(
-  fig.width=6,
+  fig.width=10,
   fig.height=6)
 data.table::setDTthreads(1)
 ## output: rmarkdown::html_vignette above creates html where figures are limited to 700px wide.
@@ -43,8 +43,10 @@ reg.dt
   task_id="easy|impossible",
   value.name="y"))
 
-## -----------------------------------------------------------------------------
+## ----fig.height=7-------------------------------------------------------------
 if(require(animint2)){
+  my_theme <- theme_bw(20)
+  theme_set(my_theme)
   ggplot()+
     geom_point(aes(
       x, y),
@@ -207,7 +209,6 @@ if(require(animint2)){
         scales="free"),
     diagram=ggplot()+
       ggtitle("Select train/test split")+
-      theme_bw()+
       theme_animint(height=400, width=300)+
       facet_grid(
         . ~ train.subsets,
@@ -249,7 +250,6 @@ if(require(animint2)){
       scale_y_continuous(
         "Row number"),
     source="https://github.com/tdhock/mlr3resampling/blob/main/vignettes/Older_resamplers.Rmd")
-  viz
 }
 if(FALSE){
   animint2pages(viz, "2023-12-13-train-predict-subsets-regression")
@@ -487,7 +487,6 @@ if(require(animint2)){
         labeller=label_both),
     diagram=ggplot()+
       ggtitle("Select train/test split")+
-      theme_bw()+
       theme_animint(height=350, width=300)+
       facet_grid(
         . ~ train.subsets,
@@ -529,7 +528,6 @@ if(require(animint2)){
       scale_y_continuous(
         "Row number"),
     source="https://github.com/tdhock/mlr3resampling/blob/main/vignettes/Older_resamplers.Rmd")
-  viz
 }
 if(FALSE){
   animint2pages(viz, "2023-12-13-train-predict-subsets-classification")
@@ -765,7 +763,6 @@ if(require(animint2)){
         data=reg.bench.score),
     video="https://vimeo.com/manage/videos/1053467310",
     source="https://github.com/tdhock/mlr3resampling/blob/main/vignettes/Older_resamplers.Rmd")
-  viz
 }
 if(FALSE){
   animint2pages(viz, "2023-12-26-train-sizes-regression")
@@ -986,7 +983,6 @@ if(require(animint2)){
         data=class.bench.score),
     video="https://vimeo.com/1053477025",
     source="https://github.com/tdhock/mlr3resampling/blob/main/vignettes/Older_resamplers.Rmd")
-  viz
 }
 if(FALSE){
   animint2pages(viz, "2023-12-27-train-sizes-classification")

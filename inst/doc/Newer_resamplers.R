@@ -1,6 +1,6 @@
 ## ----setup, include = FALSE---------------------------------------------------
 knitr::opts_chunk$set(
-  fig.width=6,
+  fig.width=10,
   fig.height=6)
 data.table::setDTthreads(1)
 ## output: rmarkdown::html_vignette above creates html where figures are limited to 700px wide.
@@ -21,12 +21,14 @@ library(data.table)
   x=x.vec,
   y = sin(x.vec)+rnorm(N,sd=0.5)))
 if(require(ggplot2)){
+  text.size <- 6
+  my_theme <- theme_bw(20)
+  theme_set(my_theme)
   ggplot()+
     geom_point(aes(
       x, y),
       shape=1,
-      data=task.dt)+
-    coord_equal()
+      data=task.dt)
 }
 
 ## -----------------------------------------------------------------------------
@@ -69,9 +71,9 @@ lgr::get_logger("mlr3")$set_threshold("warn")
   same.other.grid, store_models = TRUE))
 same.other.score <- mlr3resampling::score(
   same.other.result, mlr3::msr("regr.rmse"))
-plot(same.other.score)
+plot(same.other.score)+my_theme
 
-## -----------------------------------------------------------------------------
+## ----fig.height=3-------------------------------------------------------------
 same.other.score[, n.train := sapply(train, length)]
 same.other.score[1]
 if(require(ggplot2)){
@@ -83,6 +85,7 @@ if(require(ggplot2)){
     geom_text(aes(
       Inf, train.subsets,
       label=sprintf("n.train=%d ", n.train)),
+      size=text.size,
       hjust=1,
       vjust=1.5,
       data=same.other.score[algorithm=="featureless" & test.fold==1])+
@@ -91,7 +94,7 @@ if(require(ggplot2)){
       "Root mean squared prediction error (test set)")
 }
 
-## -----------------------------------------------------------------------------
+## ----fig.height=3-------------------------------------------------------------
 same.other.wide <- dcast(
   same.other.score,
   algorithm + test.subset + train.subsets ~ .,
@@ -111,6 +114,7 @@ if(require(ggplot2)){
     geom_text(aes(
       Inf, train.subsets,
       label=sprintf("n.train=%d ", n.train)),
+      size=text.size,
       hjust=1,
       vjust=1.5,
       data=same.other.score[algorithm=="featureless" & test.fold==1])+
@@ -121,7 +125,7 @@ if(require(ggplot2)){
 
 ## -----------------------------------------------------------------------------
 plist <- mlr3resampling::pvalue(same.other.score, digits=3)
-plot(plist)
+plot(plist)+my_theme
 
 ## -----------------------------------------------------------------------------
 if(require(ggplot2)){
@@ -135,6 +139,7 @@ if(require(ggplot2)){
       n.train, regr.rmse,
       color=algorithm,
       label=train.subsets),
+      size=text.size,
       data=same.other.score)+
     facet_grid(. ~ test.subset, labeller=label_both, scales="free")+
     scale_y_continuous(
@@ -248,7 +253,7 @@ same.other.score <- mlr3resampling::score(
   same.other.result, mlr3::msr("regr.rmse"))
 same.other.score[1]
 
-## -----------------------------------------------------------------------------
+## ----fig.height=2-------------------------------------------------------------
 if(require(ggplot2)){
 ggplot()+
   geom_point(aes(
@@ -258,8 +263,8 @@ ggplot()+
   facet_grid(. ~ test.subset, labeller=label_both)
 }
 
-## -----------------------------------------------------------------------------
-same.other.score[, subset.N := paste(train.subsets, n.train.groups)][]
+## ----fig.height=4-------------------------------------------------------------
+same.other.score[, subset.N := paste(train.subsets, n.train.groups)]
 (levs <- same.other.score[order(train.subsets, n.train.groups), unique(subset.N)])
 same.other.score[, subset.N.fac := factor(subset.N, levs)]
 if(require(ggplot2)){
@@ -281,7 +286,7 @@ if(require(ggplot2)){
     facet_wrap("test.subset", labeller=label_both, scales="free", nrow=1)
 }
 
-## -----------------------------------------------------------------------------
+## ----fig.height=5-------------------------------------------------------------
 if(require(ggplot2)){
   ggplot()+
     geom_point(aes(
@@ -353,7 +358,7 @@ ignore.cv <- mlr3resampling::ResamplingSameOtherSizesCV$new()
 ignore.cv$param_set$values$ignore_subset <- TRUE
 (same.other.result <- do_benchmark(ignore.cv))
 
-## -----------------------------------------------------------------------------
+## ----fig.height=7-------------------------------------------------------------
 same.other.score <- mlr3resampling::score(
   same.other.result, mlr3::msr("regr.rmse"))
 same.other.score[1]
@@ -394,7 +399,6 @@ if(require(ggplot2)){
   tree.fill.scale <- scale_fill_manual(
     values=c(Tree="black", "Not tree"="white"))
   ggplot()+
-    theme_bw()+
     tree.fill.scale+
     geom_rect(aes(
       xmin=xmin, xmax=xmax, ymin=ymin,ymax=ymax),
@@ -412,7 +416,6 @@ if(require(ggplot2)){
 ## -----------------------------------------------------------------------------
 if(require(ggplot2)){
   gg <- ggplot()+
-    theme_bw()+
     tree.fill.scale+
     geom_point(aes(
       xcoord, ycoord, fill=y),
@@ -425,9 +428,9 @@ if(require(ggplot2)){
       limits=y.min.max)
   if(require(directlabels)){
     gg <- gg+geom_dl(aes(
-      xcoord, ycoord, label=polygon),
+      xcoord, ycoord, label=paste("polygon",polygon)),
       data=AZdt,
-      method="smart.grid")
+      method=list(cex=2, "smart.grid"))
   }
   gg
 }
@@ -437,7 +440,6 @@ if(require(ggplot2)){
 region.colors <- c(NW="#1B9E77", NE="#D95F02", S="#7570B3")
 if(require(ggplot2)){
   ggplot()+
-    theme_bw()+
     tree.fill.scale+
     scale_color_manual(
       values=region.colors)+
@@ -503,7 +505,7 @@ if(require(ggplot2)){
 }
 
 ## -----------------------------------------------------------------------------
-plot(score.dt)
+plot(score.dt)+my_theme
 
 ## -----------------------------------------------------------------------------
 score.wide <- dcast(
@@ -533,11 +535,11 @@ if(require(ggplot2)){
 
 ## -----------------------------------------------------------------------------
 AZ_pval <- mlr3resampling::pvalue(score.dt, digits=3)
-plot(AZ_pval)
+plot(AZ_pval)+my_theme
 
 ## -----------------------------------------------------------------------------
 AZ_pval_AUC <- mlr3resampling::pvalue(score.dt, "classif.auc", digits=3)
-plot(AZ_pval_AUC)
+plot(AZ_pval_AUC)+my_theme
 
 ## -----------------------------------------------------------------------------
 sessionInfo()

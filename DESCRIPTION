@@ -1,7 +1,7 @@
 Package: mlr3resampling
 Type: Package
 Title: Resampling Algorithms for 'mlr3' Framework
-Version: 2025.3.30
+Version: 2025.6.23
 Encoding: UTF-8
 Authors@R: c(
     person("Toby", "Hocking",
@@ -44,46 +44,52 @@ Description: A supervised learning algorithm inputs a train set,
  And how do we know if training on All subsets would improve
  prediction accuracy, relative to training on the Same subset?
  SOAK, Same/Other/All K-fold cross-validation, <doi:10.48550/arXiv.2410.08643>
- can be used to answer these question, by fixing a test subset,
+ can be used to answer these questions, by fixing a test subset,
  training models on Same/Other/All subsets, and then
  comparing test error rates (Same versus Other and Same versus All).
  Also provides code for estimating how many train samples
  are required to get accurate predictions on a test set.
-License: GPL-3
+License: LGPL-3
 URL: https://github.com/tdhock/mlr3resampling
 BugReports: https://github.com/tdhock/mlr3resampling/issues
-Imports: data.table, R6, checkmate, paradox, mlr3 (>= 0.21.1), mlr3misc
+Imports: data.table, R6, checkmate, paradox, mlr3 (>= 0.21.1),
+        mlr3misc, batchtools, filelock
 Suggests: ggplot2, animint2, mlr3tuning, lgr, future, testthat, knitr,
-        markdown, nc, rpart, directlabels
+        markdown, nc, rpart, directlabels, mlr3torch, torch
 VignetteBuilder: knitr
 NeedsCompilation: no
-Packaged: 2025-04-09 07:08:19 UTC; hoct2726
-Author: Toby Hocking [aut, cre] (<https://orcid.org/0000-0002-3146-0865>),
-  Michel Lang [ctb] (<https://orcid.org/0000-0001-9754-0393>, Author of
-    mlr3 when Resampling/ResamplingCV was copied/modified),
-  Bernd Bischl [ctb] (<https://orcid.org/0000-0001-6002-6980>, Author of
-    mlr3 when Resampling/ResamplingCV was copied/modified),
-  Jakob Richter [ctb] (<https://orcid.org/0000-0003-4481-5554>, Author of
-    mlr3 when Resampling/ResamplingCV was copied/modified),
-  Patrick Schratz [ctb] (<https://orcid.org/0000-0003-0748-6624>, Author
-    of mlr3 when Resampling/ResamplingCV was copied/modified),
-  Giuseppe Casalicchio [ctb] (<https://orcid.org/0000-0001-5324-5966>,
+Packaged: 2025-06-23 09:36:09 UTC; hoct2726
+Author: Toby Hocking [aut, cre] (ORCID:
+    <https://orcid.org/0000-0002-3146-0865>),
+  Michel Lang [ctb] (ORCID: <https://orcid.org/0000-0001-9754-0393>,
     Author of mlr3 when Resampling/ResamplingCV was copied/modified),
-  Stefan Coors [ctb] (<https://orcid.org/0000-0002-7465-2146>, Author of
-    mlr3 when Resampling/ResamplingCV was copied/modified),
-  Quay Au [ctb] (<https://orcid.org/0000-0002-5252-8902>, Author of mlr3
-    when Resampling/ResamplingCV was copied/modified),
+  Bernd Bischl [ctb] (ORCID: <https://orcid.org/0000-0001-6002-6980>,
+    Author of mlr3 when Resampling/ResamplingCV was copied/modified),
+  Jakob Richter [ctb] (ORCID: <https://orcid.org/0000-0003-4481-5554>,
+    Author of mlr3 when Resampling/ResamplingCV was copied/modified),
+  Patrick Schratz [ctb] (ORCID: <https://orcid.org/0000-0003-0748-6624>,
+    Author of mlr3 when Resampling/ResamplingCV was copied/modified),
+  Giuseppe Casalicchio [ctb] (ORCID:
+    <https://orcid.org/0000-0001-5324-5966>, Author of mlr3 when
+    Resampling/ResamplingCV was copied/modified),
+  Stefan Coors [ctb] (ORCID: <https://orcid.org/0000-0002-7465-2146>,
+    Author of mlr3 when Resampling/ResamplingCV was copied/modified),
+  Quay Au [ctb] (ORCID: <https://orcid.org/0000-0002-5252-8902>, Author
+    of mlr3 when Resampling/ResamplingCV was copied/modified),
   Martin Binder [ctb],
-  Florian Pfisterer [ctb] (<https://orcid.org/0000-0001-8867-762X>,
+  Florian Pfisterer [ctb] (ORCID:
+    <https://orcid.org/0000-0001-8867-762X>, Author of mlr3 when
+    Resampling/ResamplingCV was copied/modified),
+  Raphael Sonabend [ctb] (ORCID: <https://orcid.org/0000-0001-9225-4654>,
     Author of mlr3 when Resampling/ResamplingCV was copied/modified),
-  Raphael Sonabend [ctb] (<https://orcid.org/0000-0001-9225-4654>, Author
-    of mlr3 when Resampling/ResamplingCV was copied/modified),
-  Lennart Schneider [ctb] (<https://orcid.org/0000-0003-4152-5308>,
+  Lennart Schneider [ctb] (ORCID:
+    <https://orcid.org/0000-0003-4152-5308>, Author of mlr3 when
+    Resampling/ResamplingCV was copied/modified),
+  Marc Becker [ctb] (ORCID: <https://orcid.org/0000-0002-8115-0400>,
     Author of mlr3 when Resampling/ResamplingCV was copied/modified),
-  Marc Becker [ctb] (<https://orcid.org/0000-0002-8115-0400>, Author of
-    mlr3 when Resampling/ResamplingCV was copied/modified),
-  Sebastian Fischer [ctb] (<https://orcid.org/0000-0002-9609-3197>,
-    Author of mlr3 when Resampling/ResamplingCV was copied/modified)
+  Sebastian Fischer [ctb] (ORCID:
+    <https://orcid.org/0000-0002-9609-3197>, Author of mlr3 when
+    Resampling/ResamplingCV was copied/modified)
 Maintainer: Toby Hocking <toby.hocking@r-project.org>
 Repository: CRAN
-Date/Publication: 2025-04-09 07:30:31 UTC
+Date/Publication: 2025-06-23 10:20:02 UTC
