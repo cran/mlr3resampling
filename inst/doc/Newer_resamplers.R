@@ -48,12 +48,11 @@ reg.task$col_roles$stratum <- "random_group"
 reg.task$col_roles$feature <- "x"
 
 ## -----------------------------------------------------------------------------
-same_other_sizes_cv <- mlr3resampling::ResamplingSameOtherSizesCV$new()
+soak_default <- mlr3resampling::ResamplingSameOtherSizesCV$new()
 reg.task$col_roles$subset <- "random_group" 
 
 ## -----------------------------------------------------------------------------
-same_other_sizes_cv$instantiate(reg.task)
-same_other_sizes_cv$instance$iteration.dt
+soak_default$clone()$instantiate(reg.task)$instance$iteration.dt
 
 ## ----SameOtherCV--------------------------------------------------------------
 (reg.learner.list <- list(
@@ -61,42 +60,43 @@ same_other_sizes_cv$instance$iteration.dt
 if(requireNamespace("rpart")){
   reg.learner.list$rpart <- mlr3::LearnerRegrRpart$new()
 }
-(same.other.grid <- mlr3::benchmark_grid(
+set.seed(3)
+(soak_default_grid <- mlr3::benchmark_grid(
   reg.task,
   reg.learner.list,
-  same_other_sizes_cv))
+  soak_default))
 ##if(require(future))plan("multisession")
 lgr::get_logger("mlr3")$set_threshold("warn")
-(same.other.result <- mlr3::benchmark(
-  same.other.grid, store_models = TRUE))
-same.other.score <- mlr3resampling::score(
-  same.other.result, mlr3::msr("regr.rmse"))
-plot(same.other.score)+my_theme
+(soak_default_result <- mlr3::benchmark(
+  soak_default_grid, store_models = TRUE))
+soak_default_score <- mlr3resampling::score(
+  soak_default_result, mlr3::msr("regr.rmse"))
+plot(soak_default_score)+my_theme
 
 ## ----fig.height=3-------------------------------------------------------------
-same.other.score[, n.train := sapply(train, length)]
-same.other.score[1]
+soak_default_score[, n.train := sapply(train, length)]
+soak_default_score[1]
 if(require(ggplot2)){
   ggplot()+
     geom_point(aes(
       regr.rmse, train.subsets, color=algorithm),
       shape=1,
-      data=same.other.score)+
+      data=soak_default_score)+
     geom_text(aes(
       Inf, train.subsets,
       label=sprintf("n.train=%d ", n.train)),
       size=text.size,
       hjust=1,
       vjust=1.5,
-      data=same.other.score[algorithm=="featureless" & test.fold==1])+
+      data=soak_default_score[algorithm=="featureless" & test.fold==1])+
     facet_grid(. ~ test.subset, labeller=label_both, scales="free")+
     scale_x_continuous(
       "Root mean squared prediction error (test set)")
 }
 
 ## ----fig.height=3-------------------------------------------------------------
-same.other.wide <- dcast(
-  same.other.score,
+soak_default_wide <- dcast(
+  soak_default_score,
   algorithm + test.subset + train.subsets ~ .,
   list(mean, sd),
   value.var="regr.rmse")
@@ -106,41 +106,42 @@ if(require(ggplot2)){
       regr.rmse_mean+regr.rmse_sd, train.subsets,
       xend=regr.rmse_mean-regr.rmse_sd, yend=train.subsets,
       color=algorithm),
-      data=same.other.wide)+
+      data=soak_default_wide)+
     geom_point(aes(
       regr.rmse_mean, train.subsets, color=algorithm),
       shape=1,
-      data=same.other.wide)+
+      data=soak_default_wide)+
     geom_text(aes(
       Inf, train.subsets,
       label=sprintf("n.train=%d ", n.train)),
       size=text.size,
       hjust=1,
       vjust=1.5,
-      data=same.other.score[algorithm=="featureless" & test.fold==1])+
+      data=soak_default_score[algorithm=="featureless" & test.fold==1])+
     facet_grid(. ~ test.subset, labeller=label_both, scales="free")+
     scale_x_continuous(
       "Root mean squared prediction error (test set)")
 }
 
 ## -----------------------------------------------------------------------------
-plist <- mlr3resampling::pvalue(same.other.score, digits=3)
+plist <- mlr3resampling::pvalue(soak_default_score, digits=3)
 plot(plist)+my_theme
 
 ## -----------------------------------------------------------------------------
 if(require(ggplot2)){
   ggplot()+
+    theme(legend.position=c(0.85,0.85))+
     geom_line(aes(
       n.train, regr.rmse,
       color=algorithm,
       group=paste(algorithm, test.fold)),
-      data=same.other.score)+
+      data=soak_default_score)+
     geom_label(aes(
       n.train, regr.rmse,
       color=algorithm,
       label=train.subsets),
       size=text.size,
-      data=same.other.score)+
+      data=soak_default_score)+
     facet_grid(. ~ test.subset, labeller=label_both, scales="free")+
     scale_y_continuous(
       "Root mean squared prediction error (test set)")
@@ -155,10 +156,9 @@ task.no.subset$col_roles$feature <- "x"
 str(task.no.subset$col_roles)
 
 ## -----------------------------------------------------------------------------
-same_other_sizes_cv <- mlr3resampling::ResamplingSameOtherSizesCV$new()
-same_other_sizes_cv$param_set$values$sizes <- 5
-same_other_sizes_cv$instantiate(task.no.subset)
-same_other_sizes_cv$instance$iteration.dt
+five_smaller_sizes <- mlr3resampling::ResamplingSameOtherSizesCV$new()
+five_smaller_sizes$param_set$values$sizes <- 5
+five_smaller_sizes$clone()$instantiate(task.no.subset)$instance$iteration.dt
 
 ## -----------------------------------------------------------------------------
 (reg.learner.list <- list(
@@ -166,37 +166,92 @@ same_other_sizes_cv$instance$iteration.dt
 if(requireNamespace("rpart")){
   reg.learner.list$rpart <- mlr3::LearnerRegrRpart$new()
 }
-(same.other.grid <- mlr3::benchmark_grid(
+set.seed(1)
+(five_smaller_sizes_grid <- mlr3::benchmark_grid(
   task.no.subset,
   reg.learner.list,
-  same_other_sizes_cv))
+  five_smaller_sizes))
 ##if(require(future))plan("multisession")
 lgr::get_logger("mlr3")$set_threshold("warn")
-(same.other.result <- mlr3::benchmark(
-  same.other.grid, store_models = TRUE))
-same.other.score <- mlr3resampling::score(
-  same.other.result, mlr3::msr("regr.rmse"))
-same.other.score[, n.train := sapply(train, length)]
-same.other.score[1]
-
+(five_smaller_sizes_result <- mlr3::benchmark(
+  five_smaller_sizes_grid, store_models = TRUE))
+five_smaller_sizes_score <- mlr3resampling::score(
+  five_smaller_sizes_result, mlr3::msr("regr.rmse")
+)[, n.train := sapply(train, length)]
+five_smaller_sizes_score[1]
 if(require(ggplot2)){
   ggplot()+
     geom_line(aes(
       n.train, regr.rmse,
       color=algorithm,
       group=paste(algorithm, test.fold)),
-      data=same.other.score)+
+      data=five_smaller_sizes_score)+
     geom_point(aes(
       n.train, regr.rmse,
       color=algorithm),
-      data=same.other.score)+
+      data=five_smaller_sizes_score)+
     facet_grid(. ~ test.subset, labeller=label_both, scales="free")+
     scale_x_log10(
       "Number of train rows",
-      breaks=unique(same.other.score$n.train))+
+      breaks=unique(five_smaller_sizes_score$n.train))+
     scale_y_continuous(
       "Root mean squared prediction error (test set)")
 }
+
+## -----------------------------------------------------------------------------
+(five_smaller_instantiated <- five_smaller_sizes_result$resamplings$resampling[[1]])
+(task.dt.fold <- five_smaller_instantiated$instance$fold.dt[
+, data.table(fold, task.dt)])
+task.with.fold <- mlr3::TaskRegr$new(
+  "sin", task.dt.fold, target="y")
+task.with.fold$col_roles$group <- "agroup"
+task.with.fold$col_roles$stratum <- "random_group"
+task.with.fold$col_roles$feature <- "x"
+
+## -----------------------------------------------------------------------------
+fold_col_cv <- mlr3::ResamplingCustomCV$new()
+fold_col_cv$instantiate(task.with.fold, col="fold")
+(fold_col_grid <- mlr3::benchmark_grid(
+  task.no.subset, #works because same number of rows!
+  reg.learner.list,
+  fold_col_cv))
+lgr::get_logger("mlr3")$set_threshold("warn")
+(fold_col_result <- mlr3::benchmark(
+  fold_col_grid, store_models = TRUE))
+
+## -----------------------------------------------------------------------------
+rep_score_list <- list(
+  reproduced=fold_col_result$score(mlr3::msr("regr.rmse"))[, test.fold := iteration],
+  original=five_smaller_sizes_score[n.train==max(n.train)])
+rep_score_dt <- data.table(data_source=names(rep_score_list))[
+, rep_score_list[[data_source]][, .(learner_id, test.fold, regr.rmse)]
+, by=data_source]
+dcast(rep_score_dt, learner_id + data_source ~ test.fold, value.var="regr.rmse")
+
+## -----------------------------------------------------------------------------
+custom_splits <- mlr3::ResamplingCustom$new()
+five_smaller_instantiated$instance$iteration.dt[
+, custom_splits$instantiate(task.no.subset, train, test)]
+(custom_splits_grid <- mlr3::benchmark_grid(
+  task.no.subset,
+  reg.learner.list,
+  custom_splits))
+lgr::get_logger("mlr3")$set_threshold("warn")
+(custom_split_result <- mlr3::benchmark(
+  custom_splits_grid, store_models = TRUE))
+
+## -----------------------------------------------------------------------------
+rep_custom_list <- list(
+  reproduced=custom_split_result$score(mlr3::msr("regr.rmse")),
+  original=five_smaller_sizes_score)
+rep_custom_dt <- data.table(data_source=names(rep_custom_list))[
+, rep_custom_list[[data_source]][, .(learner_id, iteration, regr.rmse)]
+, by=data_source]
+dcast(
+  rep_custom_dt,
+  learner_id + iteration ~ data_source,
+  value.var="regr.rmse"
+)[, diff := reproduced-original][]
 
 ## ----simulationShort----------------------------------------------------------
 N <- 600
@@ -223,35 +278,34 @@ task.dt[, random_subset := rep(
   l=.N
 )][]
 table(subset.tab <- task.dt$random_subset)
-
 reg.task <- mlr3::TaskRegr$new(
   "sin", task.dt, target="y")
 reg.task$col_roles$subset <- "random_subset"
 reg.task$col_roles$group <- "agroup"
 reg.task$col_roles$stratum <- "random_subset"
 reg.task$col_roles$feature <- "x"
-same_other_sizes_cv <- mlr3resampling::ResamplingSameOtherSizesCV$new()
+soak_sizes <- mlr3resampling::ResamplingSameOtherSizesCV$new()
 
 ## -----------------------------------------------------------------------------
-same_other_sizes_cv$param_set$values$sizes <- 0
-same_other_sizes_cv$instantiate(reg.task)
-same_other_sizes_cv$instance$it
+soak_sizes$param_set$values$sizes <- 0
+soak_sizes$instantiate(reg.task)
+soak_sizes$instance$it
 (reg.learner.list <- list(
   mlr3::LearnerRegrFeatureless$new()))
 if(requireNamespace("rpart")){
   reg.learner.list$rpart <- mlr3::LearnerRegrRpart$new()
 }
-(same.other.grid <- mlr3::benchmark_grid(
+(soak_sizes_grid <- mlr3::benchmark_grid(
   reg.task,
   reg.learner.list,
-  same_other_sizes_cv))
+  soak_sizes))
 ##if(require(future))plan("multisession")
 lgr::get_logger("mlr3")$set_threshold("warn")
-(same.other.result <- mlr3::benchmark(
-  same.other.grid, store_models = TRUE))
-same.other.score <- mlr3resampling::score(
-  same.other.result, mlr3::msr("regr.rmse"))
-same.other.score[1]
+(soak_sizes_result <- mlr3::benchmark(
+  soak_sizes_grid, store_models = TRUE))
+soak_sizes_score <- mlr3resampling::score(
+  soak_sizes_result, mlr3::msr("regr.rmse"))
+soak_sizes_score[1]
 
 ## ----fig.height=2-------------------------------------------------------------
 if(require(ggplot2)){
@@ -259,30 +313,30 @@ ggplot()+
   geom_point(aes(
     regr.rmse, train.subsets, color=algorithm),
     shape=1,
-    data=same.other.score[groups==n.train.groups])+
+    data=soak_sizes_score[groups==n.train.groups])+
   facet_grid(. ~ test.subset, labeller=label_both)
 }
 
 ## ----fig.height=4-------------------------------------------------------------
-same.other.score[, subset.N := paste(train.subsets, n.train.groups)]
-(levs <- same.other.score[order(train.subsets, n.train.groups), unique(subset.N)])
-same.other.score[, subset.N.fac := factor(subset.N, levs)]
+soak_sizes_score[, subset.N := paste(train.subsets, n.train.groups)]
+(levs <- soak_sizes_score[order(train.subsets, n.train.groups), unique(subset.N)])
+soak_sizes_score[, subset.N.fac := factor(subset.N, levs)]
 if(require(ggplot2)){
   ggplot()+
     geom_point(aes(
       regr.rmse, subset.N.fac, color=algorithm),
       shape=1,
-      data=same.other.score)+
+      data=soak_sizes_score)+
     facet_wrap("test.subset", labeller=label_both, scales="free", nrow=1)
 }
-(levs <- same.other.score[order(n.train.groups, train.subsets), unique(subset.N)])
-same.other.score[, N.subset.fac := factor(subset.N, levs)]
+(levs <- soak_sizes_score[order(n.train.groups, train.subsets), unique(subset.N)])
+soak_sizes_score[, N.subset.fac := factor(subset.N, levs)]
 if(require(ggplot2)){
   ggplot()+
     geom_point(aes(
       regr.rmse, N.subset.fac, color=algorithm),
       shape=1,
-      data=same.other.score)+
+      data=soak_sizes_score)+
     facet_wrap("test.subset", labeller=label_both, scales="free", nrow=1)
 }
 
@@ -293,16 +347,16 @@ if(require(ggplot2)){
       n.train.groups, regr.rmse,
       color=train.subsets),
       shape=1,
-      data=same.other.score)+
+      data=soak_sizes_score)+
     geom_line(aes(
       n.train.groups, regr.rmse,
       group=paste(train.subsets, seed, algorithm),
       linetype=algorithm,
       color=train.subsets),
-      data=same.other.score)+
+      data=soak_sizes_score)+
     facet_grid(test.fold ~ test.subset, labeller=label_both)
 }
-rpart.score <- same.other.score[algorithm=="rpart" & train.subsets != "other"]
+rpart.score <- soak_sizes_score[algorithm=="rpart" & train.subsets != "other"]
 if(require(ggplot2)){
   ggplot()+
     geom_point(aes(
@@ -344,13 +398,13 @@ do_benchmark <- function(subtrain.valid.cv){
         measure = mlr3::msr("regr.rmse"))
     }
   }
-  same.other.grid <- mlr3::benchmark_grid(
+  soak_sizes_grid <- mlr3::benchmark_grid(
     reg.task,
     reg.learner.list,
-    same_other_sizes_cv)
+    soak_sizes)
   lgr::get_logger("bbotk")$set_threshold("warn")
-  same.other.result <- mlr3::benchmark(
-    same.other.grid, store_models = TRUE)
+  soak_sizes_result <- mlr3::benchmark(
+    soak_sizes_grid, store_models = TRUE)
 }
 
 ## -----------------------------------------------------------------------------
@@ -484,6 +538,7 @@ if(requireNamespace("rpart")){
 for(learner.i in seq_along(learner.list)){
   learner.list[[learner.i]]$predict_type <- "prob"
 }
+set.seed(1)
 (bench.grid <- mlr3::benchmark_grid(ctask, learner.list, same.other.cv))
 
 ## -----------------------------------------------------------------------------

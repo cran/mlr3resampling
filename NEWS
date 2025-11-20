@@ -1,3 +1,24 @@
+Changes in version 2025.11.19 (PR#51)
+
+- plot() yields consistent Y axes (other on top) for score() and pvalue().
+
+Changes in version 2025.9.24
+
+- Newer resamplers vignette reproducibility section.
+
+Changes in version 2025.9.22 (PR#40)
+
+- Older resamplers vignette uses HTML grid layout.
+- score() uses setattr() instead of class()<- to set "score" class of data table output.
+
+Changes in version 2025.7.30 (PR#35)
+
+- proj_grid() outputs tasks and resamplings sub-directories, instead of saving these data to the grid.rds file.
+- proj_compute_mpi() launches a SLURM MPI job in which each task computes a variable number of results.
+- proj_test() for running one CV iteration, on down-sampled Tasks, using edited Learners. 
+- proj_fread() for reading all CSV results.
+- New Learners AutoTunerTorch_epochs, LearnerRegrCVGlmnetSave, LearnerClassifCVGlmnetSave, with special methods for proj_* functions: save_learner and edit_learner.
+
 Changes in version 2025.6.23
 
 - proj_* functions for SLURM load balancing (PR#32).

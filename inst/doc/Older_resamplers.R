@@ -9,7 +9,6 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
-mlr3resampling::ResamplingSameOtherCV$new()
 
 ## -----------------------------------------------------------------------------
 N <- 300
@@ -30,7 +29,7 @@ for(task_id in names(reg.pattern.list)){
   task.dt <- reg.dt[, c("x","person",yname), with=FALSE]
   reg.task <- mlr3::TaskRegr$new(
     task_id, task.dt, target=yname)
-  reg.task$col_roles$subset <- "person"
+  if(requireNamespace("mlr3resampling"))reg.task$col_roles$subset <- "person"
   reg.task$col_roles$stratum <- "person"
   reg.task$col_roles$feature <- "x"
   reg.task.list[[task_id]] <- reg.task
@@ -45,9 +44,9 @@ reg.dt
 
 ## ----fig.height=7-------------------------------------------------------------
 if(require(animint2)){
-  my_theme <- theme_bw(20)
-  theme_set(my_theme)
+  print_theme <- theme_bw(20)
   ggplot()+
+    print_theme+
     geom_point(aes(
       x, y),
       data=reg.tall)+
@@ -89,6 +88,7 @@ reg.bench.score[1]
 ## -----------------------------------------------------------------------------
 if(require(animint2)){
   ggplot()+
+    print_theme+
     scale_x_log10()+
     geom_point(aes(
       regr.mse, train.subsets, color=algorithm),
@@ -157,7 +157,10 @@ if(require(animint2)){
     video="https://vimeo.com/1053413000",
     pred=ggplot()+
       ggtitle("Predictions for selected train/test split")+
-      theme_animint(height=400)+
+      theme_animint(
+        rowspan=2,
+        width=600,
+        height=700)+
       scale_fill_manual(values=set.colors)+
       geom_point(aes(
         x, y, fill=set.name),
@@ -185,7 +188,10 @@ if(require(animint2)){
         breaks=seq(-100, 100, by=2)),
     err=ggplot()+
       ggtitle("Test error for each split")+
-      theme_animint(height=400, width=350)+
+      theme_animint(
+        height=400,
+        width=400,
+        last_in_row=TRUE)+
       guides(fill="none")+
       scale_y_log10(
         "Mean squared error on test set")+
@@ -209,7 +215,7 @@ if(require(animint2)){
         scales="free"),
     diagram=ggplot()+
       ggtitle("Select train/test split")+
-      theme_animint(height=400, width=300)+
+      theme_animint(height=300, width=350)+
       facet_grid(
         . ~ train.subsets,
         scales="free",
@@ -225,9 +231,10 @@ if(require(animint2)){
         fill=NA,
         data=inst$viz.rect.dt)+
       scale_fill_manual(values=set.colors)+
-      geom_text(aes(
+      geom_label_aligned(aes(
         x=ifelse(rows=="subset", Inf, -Inf),
         y=(display_row+display_end)/2,
+        color=rows,
         hjust=ifelse(rows=="subset", 1, 0),
         label=paste0(rows, "=", ifelse(rows=="subset", subset, fold))),
         help="Text labels indicate chunks of data with common fold (grey) and subset (gold).",
@@ -249,10 +256,11 @@ if(require(animint2)){
         breaks=c(1,6, 7,12, 13,18))+
       scale_y_continuous(
         "Row number"),
+    first=list(iteration=10),
     source="https://github.com/tdhock/mlr3resampling/blob/main/vignettes/Older_resamplers.Rmd")
 }
 if(FALSE){
-  animint2pages(viz, "2023-12-13-train-predict-subsets-regression")
+  animint2pages(viz, "2023-12-13-train-predict-subsets-regression", chromote_sleep_seconds = 5)
 }
 
 ## -----------------------------------------------------------------------------
@@ -290,6 +298,7 @@ full.dt
 ## -----------------------------------------------------------------------------
 if(require(animint2)){
   ggplot()+
+    print_theme+
     geom_point(aes(
       x1, x2, color=label),
       shape=1,
@@ -343,6 +352,7 @@ class.bench.score[1]
 ## -----------------------------------------------------------------------------
 if(require(animint2)){
   ggplot()+
+    print_theme+
     geom_point(aes(
       classif.ce, train.subsets, color=algorithm),
       shape=1,
@@ -429,10 +439,10 @@ make_person_subset(class.bench.score)
 if(require(animint2)){
   viz <- animint(
     title="SOAK algorithm: train/predict on subsets, classification",
-    video="https://vimeo.com/manage/videos/1053464329",
+    video="https://vimeo.com/1053464329",
     pred=ggplot()+
       ggtitle("Predictions for selected train/test split")+
-      theme_animint(height=350, width=350)+
+      theme_animint(height=700, width=700, rowspan=2)+
       scale_fill_manual(values=set.colors)+
       scale_color_manual(values=c(spam="black","not spam"="white"))+
       geom_point(aes(
@@ -459,7 +469,7 @@ if(require(animint2)){
         breaks=seq(-100, 100, by=2)),
     err=ggplot()+
       ggtitle("Test error for each split")+
-      theme_animint(height=350, width=350)+
+      theme_animint(height=400, width=400, last_in_row=TRUE)+
       theme(panel.margin=grid::unit(1, "lines"))+
       scale_y_continuous(
         "Classification error on test set",
@@ -487,7 +497,7 @@ if(require(animint2)){
         labeller=label_both),
     diagram=ggplot()+
       ggtitle("Select train/test split")+
-      theme_animint(height=350, width=300)+
+      theme_animint(height=300, width=400)+
       facet_grid(
         . ~ train.subsets,
         scales="free",
@@ -503,9 +513,10 @@ if(require(animint2)){
         fill=NA,
         data=inst$viz.rect.dt)+
       scale_fill_manual(values=set.colors)+
-      geom_text(aes(
+      geom_label_aligned(aes(
         x=ifelse(rows=="subset", Inf, -Inf),
         y=(display_row+display_end)/2,
+        color=rows,
         hjust=ifelse(rows=="subset", 1, 0),
         label=paste0(rows, "=", ifelse(rows=="subset", subset, fold))),
         help="Text labels indicate chunks of data with common fold (grey) and subset (gold).",
@@ -527,10 +538,11 @@ if(require(animint2)){
         breaks=c(1,6, 7,12, 13,18))+
       scale_y_continuous(
         "Row number"),
+    first=list(iteration=10),
     source="https://github.com/tdhock/mlr3resampling/blob/main/vignettes/Older_resamplers.Rmd")
 }
 if(FALSE){
-  animint2pages(viz, "2023-12-13-train-predict-subsets-classification")
+  animint2pages(viz, "2023-12-13-train-predict-subsets-classification", chromote_sleep_seconds=5)
 }
 
 ## -----------------------------------------------------------------------------
@@ -564,6 +576,7 @@ for(task_id in names(reg.pattern.list)){
 ## -----------------------------------------------------------------------------
 if(require(animint2)){
   ggplot()+
+    print_theme+
     geom_point(aes(
       x, y),
       data=reg.data)+
@@ -606,6 +619,7 @@ reg.bench.score[1]
 train_size_vec <- unique(reg.bench.score$train_size)
 if(require(animint2)){
   ggplot()+
+    print_theme+
     scale_x_log10(
       breaks=train_size_vec)+
     scale_y_log10()+
@@ -633,6 +647,7 @@ reg.mean.dt <- dcast(
   value.var="regr.mse")
 if(require(animint2)){
   ggplot()+
+    print_theme+
     scale_x_log10(
       breaks=train_size_vec)+
     scale_y_log10()+
@@ -761,11 +776,11 @@ if(require(animint2)){
         showSelected=c("algorithm","seed"),
         clickSelects="iteration",
         data=reg.bench.score),
-    video="https://vimeo.com/manage/videos/1053467310",
+    video="https://vimeo.com/1053467310",
     source="https://github.com/tdhock/mlr3resampling/blob/main/vignettes/Older_resamplers.Rmd")
 }
 if(FALSE){
-  animint2pages(viz, "2023-12-26-train-sizes-regression")
+  animint2pages(viz, "2023-12-26-train-sizes-regression", chromote_sleep_seconds = 5)
 }
 
 ## -----------------------------------------------------------------------------
@@ -802,6 +817,7 @@ class.data[, .(count=.N), by=.(task_id, y)]
 ## -----------------------------------------------------------------------------
 if(require(animint2)){
   ggplot()+
+    print_theme+
     geom_point(aes(
       x1, x2, color=y),
       shape=1,
@@ -835,6 +851,7 @@ class.bench.score[1]
 ## -----------------------------------------------------------------------------
 if(require(animint2)){
   ggplot()+
+    print_theme+
     geom_line(aes(
       train_size, classif.ce,
       group=paste(algorithm, seed),
@@ -985,7 +1002,7 @@ if(require(animint2)){
     source="https://github.com/tdhock/mlr3resampling/blob/main/vignettes/Older_resamplers.Rmd")
 }
 if(FALSE){
-  animint2pages(viz, "2023-12-27-train-sizes-classification")
+  animint2pages(viz, "2023-12-27-train-sizes-classification", chromote_sleep_seconds = 5)
 }
 
 ## -----------------------------------------------------------------------------
