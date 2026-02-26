@@ -1,7 +1,7 @@
 Package: mlr3resampling
 Type: Package
 Title: Resampling Algorithms for 'mlr3' Framework
-Version: 2025.11.19
+Version: 2026.2.24
 Encoding: UTF-8
 Authors@R: c(
     person("Toby", "Hocking",
@@ -54,12 +54,12 @@ URL: https://github.com/tdhock/mlr3resampling
 BugReports: https://github.com/tdhock/mlr3resampling/issues
 Imports: data.table, R6, checkmate, paradox, mlr3 (>= 1.0.0), mlr3misc,
         pbdMPI
-Suggests: ggplot2, animint2, mlr3tuning, lgr, future, testthat, knitr,
-        markdown, nc, rpart, directlabels, mlr3pipelines, glmnet,
-        mlr3learners, mlr3torch, torch
+Suggests: ggplot2, animint2, mlr3tuning, lgr, future, future.apply,
+        testthat, knitr, markdown, nc, rpart, directlabels,
+        mlr3pipelines, glmnet, mlr3learners, mlr3torch, torch
 VignetteBuilder: knitr
 NeedsCompilation: no
-Packaged: 2025-11-20 14:40:25 UTC; hoct2726
+Packaged: 2026-02-26 15:23:30 UTC; hoct2726
 Author: Toby Hocking [aut, cre] (ORCID:
     <https://orcid.org/0000-0002-3146-0865>),
   Michel Lang [ctb] (ORCID: <https://orcid.org/0000-0001-9754-0393>,
@@ -93,4 +93,4 @@ Author: Toby Hocking [aut, cre] (ORCID:
     Resampling/ResamplingCV was copied/modified)
 Maintainer: Toby Hocking <toby.hocking@r-project.org>
 Repository: CRAN
-Date/Publication: 2025-11-20 19:10:02 UTC
+Date/Publication: 2026-02-26 16:50:09 UTC
